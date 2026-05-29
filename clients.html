@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Clients — GEMS Talent</title>
+
+  <meta name="description" content="Integrated resorts, broadcasters, agencies, and brand partners — the clients we cast and run rooms for across Singapore and Asia." />
+  <link rel="canonical" href="https://gemstalent.com.sg/clients" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="assets/gems-stamp-nav.jpg" />
+  <link rel="apple-touch-icon" href="assets/gems-stamp-nav.jpg" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="GEMS Talent" />
+  <meta property="og:title" content="Clients — GEMS Talent" />
+  <meta property="og:description" content="Integrated resorts, broadcasters, agencies, and brand partners — the clients we cast and run rooms for across Singapore and Asia." />
+  <meta property="og:url" content="https://gemstalent.com.sg/clients" />
+  <meta property="og:image" content="https://gemstalent.com.sg/assets/og-card.png" />
+  <meta property="og:locale" content="en_SG" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Clients — GEMS Talent" />
+  <meta name="twitter:description" content="Integrated resorts, broadcasters, agencies, and brand partners — the clients we cast and run rooms for across Singapore and Asia." />
+  <meta name="twitter:image" content="https://gemstalent.com.sg/assets/og-card.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <link rel="stylesheet" href="styles/styles.css" />
+  <link rel="stylesheet" href="styles/responsive.css" />
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    body[data-brass="default"]{--brass:#C9A961;--brass-soft:#b89548}
+    .c-summary{
+      display: grid;
+      grid-template-columns: 200px 1fr 1.4fr;
+      gap: 64px;
+      padding: 96px 0 64px;
+      border-bottom: 1px solid var(--hair);
+    }
+    .c-summary .lede{ font-size: 22px; line-height: 1.45; color: var(--ink); }
+    .c-summary .stat-num{ font-size: clamp(48px, 5vw, 80px); font-weight: 500; letter-spacing: -0.025em; line-height: 0.95; font-family: var(--sans); color: var(--ink); }
+    .c-summary .stat-label{ font-size: 13px; color: var(--slate); max-width: 22ch; margin-top: 14px; line-height: 1.4; }
+    .c-summary .stat-grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 32px; padding-top: 8px; }
+
+    .c-group{
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 64px;
+      padding: 80px 0;
+      border-bottom: 1px solid var(--hair);
+    }
+    .c-group:last-of-type{ border-bottom: none; }
+    .c-group .head .num{
+      font-family: var(--sans); font-weight: 500;
+      font-size: 60px; line-height: 0.9; letter-spacing: -0.025em;
+      color: var(--cobalt);
+    }
+    .c-group .head .label{
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--slate); margin-top: 18px;
+      max-width: 24ch; line-height: 1.5;
+    }
+    .c-group .head .blurb{
+      font-size: 15px; line-height: 1.55; color: var(--slate);
+      margin-top: 28px; max-width: 30ch;
+    }
+    .c-list{
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: 32px;
+    }
+    .c-row{
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: baseline;
+      padding: 22px 0;
+      border-top: 1px solid var(--hair);
+    }
+    .c-row:first-child{ border-top-color: var(--hair-strong); }
+    .c-row .name{ font-size: 19px; font-weight: 500; letter-spacing: -0.01em; color: var(--ink); }
+    .c-row .note{ font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--slate); text-align: right; }
+
+    .c-testimonials{ background: var(--cobalt-deep); color: var(--bone); padding: 140px 0; }
+    .c-testimonials .grid{
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 64px;
+    }
+    .c-testimonials .rail{
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(250,247,242,0.55);
+    }
+    .c-testimonials .rail .num{ color: var(--teal); margin-right: 12px; }
+    .c-testimonials .quotes{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px;
+    }
+    .c-testimonials blockquote{
+      margin: 0;
+      font-family: var(--serif); font-style: italic; font-weight: 400;
+      font-size: clamp(22px, 1.9vw, 30px);
+      line-height: 1.35; letter-spacing: -0.01em;
+      color: var(--bone);
+    }
+    .c-testimonials blockquote::before{
+      content: "“";
+      display: block;
+      font-size: 64px;
+      line-height: 0.5;
+      color: var(--brass);
+      margin-bottom: 24px;
+    }
+    .c-testimonials .attr{
+      margin-top: 32px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(250,247,242,0.18);
+      font-family: var(--sans); font-style: normal;
+      font-size: 13px; color: rgba(250,247,242,0.85);
+    }
+    .c-testimonials .attr .org{
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(250,247,242,0.55);
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body data-brass="default">
+  <script src="data.js"></script>
+  <div id="root"></div>
+  <script type="text/babel" src="components/nav.jsx"></script>
+  <script type="text/babel" src="components/sections.jsx"></script>
+  <script type="text/babel" src="components/page-header.jsx"></script>
+  <script type="text/babel" data-presets="env,react">
+    const { useState, useEffect } = React;
+    const D = window.GEMS_DATA;
+
+    function ClientsSummary({ groups }) {
+      const totalCount = groups.reduce((n, g) => n + g.items.length, 0);
+      return (
+        <div className="c-summary">
+          <div className="mono" style={{ color: "var(--slate)" }}>
+            <span style={{ color: "var(--brass)", marginRight: 8 }}>04</span>Trusted partners
+          </div>
+          <p className="lede">
+            We work with venues, broadcasters, brands, and creative groups across
+            Asia — most engagements are repeats. A selection of partners below.
+          </p>
+          <div className="stat-grid">
+            <div>
+              <div className="stat-num">{totalCount}+</div>
+              <div className="stat-label">Active client relationships across the region</div>
+            </div>
+            <div>
+              <div className="stat-num">12<span style={{ color: "var(--slate)", fontSize: "0.6em" }}>yrs</span></div>
+              <div className="stat-label">Average tenure of our top-five accounts</div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function ClientGroup({ g }) {
+      return (
+        <section
+          id={"group-" + g.n}
+          className="c-group"
+          data-screen-label={g.n + " " + g.label}
+        >
+          <div className="head">
+            <div className="num">{g.n}</div>
+            <div className="label">{g.label}</div>
+            <div className="blurb">{g.blurb}</div>
+          </div>
+          <div className="c-list">
+            {g.items.map((c) => (
+              <div key={c.name} className="c-row">
+                <span className="name">{c.name}</span>
+                <span className="note">{c.note}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+    }
+
+    function Testimonials({ items }) {
+      return (
+        <section className="c-testimonials" data-screen-label="Testimonials">
+          <div className="container">
+            <div className="grid">
+              <div className="rail"><span className="num">05</span>In their words</div>
+              <div className="quotes">
+                {items.map((t, i) => (
+                  <blockquote key={i}>
+                    {t.quote}
+                    <div className="attr">
+                      {t.attribution}
+                      <span className="org">{t.org}</span>
+                    </div>
+                  </blockquote>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function App() {
+      useEffect(() => { document.body.setAttribute("data-brass", "default"); }, []);
+      return (
+        <>
+          <Nav condensed={true} />
+          <main>
+            <PageHeader
+              eyebrow={{ num: "04", label: "Our clients" }}
+              title={<><span>Trusted by venues, brands, and broadcasters.</span></>}
+              sub="From integrated resorts to broadcasters and creative groups — partners across Asia who keep coming back."
+            />
+            <ClientMarquee />
+            <section className="section" style={{ paddingTop: 0, paddingBottom: 0 }}>
+              <div className="container">
+                <ClientsSummary groups={D.clientGroups} />
+                {D.clientGroups.map((g) => (
+                  <ClientGroup key={g.n} g={g} />
+                ))}
+              </div>
+            </section>
+            <Testimonials items={D.testimonials} />
+            <FooterCTA variant="work" useSerif={false} />
+          </main>
+          <Footer />
+        </>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

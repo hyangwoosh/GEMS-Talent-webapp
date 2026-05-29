@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>OG card — GEMS Talent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+<style>
+  :root{
+    --cobalt:#0D3FA0;
+    --cobalt-deep:#062870;
+    --cobalt-soft:#2A5DC4;
+    --teal:#1FA2C2;
+    --brass:#C9A961;
+    --bone:#E6ECF2;
+    --ink:#0E1A2B;
+  }
+  *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{
+    width:1200px; height:630px;
+    background:#000;
+    font-family:"Inter Tight","Inter",ui-sans-serif,system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow:hidden;
+  }
+  .card{
+    position:relative;
+    width:1200px; height:630px;
+    background:var(--cobalt-deep);
+    color:var(--bone);
+    padding:64px 80px;
+    display:flex; flex-direction:column; justify-content:space-between;
+    overflow:hidden;
+  }
+
+  /* Subtle radial wash — gives the cobalt some depth without being a gradient blob */
+  .card::before{
+    content:""; position:absolute; inset:0;
+    background:
+      radial-gradient(900px 600px at 85% 110%, rgba(31,162,194,0.18), transparent 60%),
+      radial-gradient(700px 500px at 10% -10%, rgba(42,93,196,0.22), transparent 55%);
+    pointer-events:none;
+  }
+  .card > *{ position:relative; z-index:1; }
+
+  /* Top row — stamp + eyebrow */
+  .top{ display:flex; align-items:center; gap:18px; }
+  .stamp{
+    width:42px; height:42px; border-radius:50%;
+    background:var(--brass);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--cobalt-deep);
+    font-weight:700; font-size:14px; letter-spacing:0.02em;
+  }
+  .eyebrow{
+    font-family:"JetBrains Mono",monospace;
+    font-size:13px; letter-spacing:0.28em;
+    text-transform:uppercase;
+    color:rgba(230,236,242,0.78);
+  }
+  .eyebrow .dot{ color:var(--brass); margin:0 10px; }
+
+  /* Headline block */
+  .headline{
+    display:flex; flex-direction:column;
+    line-height:0.96; letter-spacing:-0.028em;
+    font-weight:500;
+    font-size:96px;
+  }
+  .headline .line{ display:block; }
+  .headline .line--accent{ color:var(--brass); }
+
+  /* Bottom row */
+  .bottom{
+    display:flex; align-items:flex-end; justify-content:space-between;
+    gap:32px;
+  }
+  .lockup{
+    display:flex; flex-direction:column; gap:14px;
+  }
+  .wordmark{
+    font-size:30px; font-weight:600; letter-spacing:-0.01em;
+  }
+  .wordmark .accent{ color:var(--brass); }
+  .tag{
+    font-family:"JetBrains Mono",monospace;
+    font-size:13px; letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:rgba(230,236,242,0.62);
+  }
+  .geo{
+    font-family:"JetBrains Mono",monospace;
+    font-size:13px; letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:rgba(230,236,242,0.62);
+    text-align:right;
+    line-height:1.6;
+  }
+  .geo .em{ color:var(--brass); }
+
+  /* Brass hairline above bottom row */
+  .rule{
+    height:2px; width:96px;
+    background:var(--brass);
+    margin-bottom:24px;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="top">
+      <div class="stamp">G</div>
+      <div class="eyebrow">Gems<span class="dot">·</span>Talent<span class="dot">·</span>Singapore</div>
+    </div>
+
+    <div class="headline">
+      <span class="line">Singapore's stage.</span>
+      <span class="line line--accent">Our talent.</span>
+      <span class="line">Asia's audience.</span>
+    </div>
+
+    <div>
+      <div class="rule"></div>
+      <div class="bottom">
+        <div class="lockup">
+          <div class="wordmark">GEMS <span class="accent">Talent</span></div>
+          <div class="tag">Representation<span style="color:var(--brass)">  ·  </span>Marketing<span style="color:var(--brass)">  ·  </span>Production</div>
+        </div>
+        <div class="geo">
+          SG<span class="em"> / </span>KL<span class="em"> / </span>JKT<br/>
+          Est. 2014
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

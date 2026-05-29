@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>OG card (photo-led) — GEMS Talent</title>
+
+<!--
+  Photo-led OG card variant — 1200×630.
+
+  Composition
+  ───────────
+  Left panel  (44%)  cobalt-deep with stamp, headline, lockup, geo
+  Right panel (56%)  full-bleed featured production photo, light ink wash
+
+  How to export the actual /assets/og-card-photo.png
+  ──────────────────────────────────────────────────
+  Two paths:
+    a) Headless screenshot of this file at 1200×630
+       (Puppeteer / Playwright):
+         page.setViewport({ width: 1200, height: 630, deviceScaleFactor: 2 });
+         page.goto('file://…/og-card-photo.html', { waitUntil: 'networkidle0' });
+         page.screenshot({ path: 'assets/og-card-photo.png' });
+
+    b) The canvas-driven approach used for the type-led /assets/og-card.png —
+       drop your chosen featured image at assets/og-photo-source.jpg, then
+       run scripts/build-og-card-photo.mjs (see file for the script).
+
+  The HTML reference here uses the live WP CDN URL for the photo so it
+  renders correctly when opened directly in a browser. Once the CDN
+  download script (scripts/download-cdn-images.mjs) has run, swap
+  `--photo-src` below to a local path.
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+
+<style>
+  :root {
+    --cobalt:       #0D3FA0;
+    --cobalt-deep:  #062870;
+    --cobalt-soft:  #2A5DC4;
+    --teal:         #1FA2C2;
+    --brass:        #C9A961;
+    --bone:         #E6ECF2;
+    --ink:          #0E1A2B;
+
+    /* Swap to a local file (e.g. "assets/cdn/RWS-Exclusive-Showcase-Shila-Amzah.jpg")
+       after running scripts/download-cdn-images.mjs. */
+    --photo-src: url("https://gemstalent.com.sg/wordpress/wp-content/uploads/2026/05/RWS-Exclusive-Showcase-Shila-Amzah.jpg");
+  }
+
+  * , *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 1200px; height: 630px;
+    background: #000;
+    font-family: "Inter Tight","Inter",ui-sans-serif,system-ui,sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  .card {
+    position: relative;
+    width: 1200px; height: 630px;
+    display: grid;
+    grid-template-columns: 528px 1fr;        /* 44 / 56 */
+    background: var(--cobalt-deep);
+    color: var(--bone);
+    overflow: hidden;
+  }
+
+  /* ── Left panel: ink type lockup ── */
+  .panel {
+    position: relative;
+    padding: 58px 56px 56px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    background: var(--cobalt-deep);
+  }
+  /* Subtle radial cobalt/teal washes so the flat panel doesn't feel dead next to the photo */
+  .panel::before {
+    content: ""; position: absolute; inset: 0;
+    background:
+      radial-gradient(540px 380px at 0% 110%, rgba(31,162,194,0.20), transparent 60%),
+      radial-gradient(420px 320px at -10% -10%, rgba(42,93,196,0.30), transparent 55%);
+    pointer-events: none;
+  }
+  .panel > * { position: relative; z-index: 1; }
+
+  /* Top row — stamp + eyebrow */
+  .top { display: flex; align-items: center; gap: 16px; }
+  .stamp {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--brass);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--cobalt-deep);
+    font-weight: 700; font-size: 16px; letter-spacing: 0.02em;
+  }
+  .eyebrow {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px; letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: rgba(230,236,242,0.80);
+  }
+  .eyebrow .dot { color: var(--brass); margin: 0 9px; }
+
+  /* Headline — single line, brass accent */
+  .headline {
+    display: flex; flex-direction: column;
+    line-height: 0.96; letter-spacing: -0.028em;
+    font-weight: 500;
+    font-size: 76px;
+  }
+  .headline .line { display: block; }
+  .headline .line--accent { color: var(--brass); }
+
+  /* Bottom lockup */
+  .rule {
+    height: 2px; width: 84px;
+    background: var(--brass);
+    margin-bottom: 20px;
+  }
+  .lockup { display: flex; flex-direction: column; gap: 12px; }
+  .wordmark {
+    font-size: 26px; font-weight: 600; letter-spacing: -0.01em;
+  }
+  .wordmark .accent { color: var(--brass); }
+  .tag {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11.5px; letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(230,236,242,0.62);
+  }
+  .geo {
+    margin-top: 14px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px; letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(230,236,242,0.55);
+  }
+  .geo .em { color: var(--brass); }
+
+  /* ── Right panel: full-bleed photo ── */
+  .photo {
+    position: relative;
+    background-image: var(--photo-src);
+    background-size: cover;
+    background-position: center 30%;
+    background-color: #14213b;
+  }
+  /* Ink wash so the photo never overpowers the type panel — also a brass-edged
+     vertical "seam" so the panel boundary reads as intentional, not jagged. */
+  .photo::before {
+    content: ""; position: absolute; inset: 0;
+    background:
+      linear-gradient(90deg, rgba(6,40,112,0.55) 0%, rgba(6,40,112,0.12) 28%, rgba(14,26,43,0.10) 70%, rgba(14,26,43,0.60) 100%),
+      linear-gradient(180deg, rgba(14,26,43,0.18) 0%, rgba(14,26,43,0) 30%, rgba(14,26,43,0.55) 100%);
+    pointer-events: none;
+  }
+  /* Hairline seam between panel and photo */
+  .photo::after {
+    content: ""; position: absolute;
+    top: 56px; bottom: 56px; left: 0;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, var(--brass) 25%, var(--brass) 75%, transparent);
+    opacity: 0.55;
+  }
+
+  /* Photo-side micro caption (mono) — quiet, lower-right */
+  .photo-caption {
+    position: absolute; right: 32px; bottom: 28px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px; letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(230,236,242,0.78);
+    text-align: right;
+    line-height: 1.7;
+  }
+  .photo-caption .em { color: var(--brass); }
+</style>
+</head>
+<body>
+  <div class="card">
+
+    <!-- Left: ink panel -->
+    <div class="panel">
+      <div class="top">
+        <div class="stamp">G</div>
+        <div class="eyebrow">Gems<span class="dot">·</span>Talent<span class="dot">·</span>Singapore</div>
+      </div>
+
+      <div class="headline">
+        <span class="line">Singapore's stage.</span>
+        <span class="line line--accent">Our talent.</span>
+        <span class="line">Asia's audience.</span>
+      </div>
+
+      <div>
+        <div class="rule"></div>
+        <div class="lockup">
+          <div class="wordmark">GEMS <span class="accent">Talent</span></div>
+          <div class="tag">Representation<span style="color:var(--brass)">  ·  </span>Marketing<span style="color:var(--brass)">  ·  </span>Production</div>
+        </div>
+        <div class="geo">
+          SG<span class="em"> / </span>KL<span class="em"> / </span>JKT
+          <span style="color:var(--brass); margin:0 10px">·</span>
+          Est. 2014
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: photo -->
+    <div class="photo">
+      <div class="photo-caption">
+        RWS Exclusive Showcase<br/>
+        <span class="em">feat.</span> Shila Amzah
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

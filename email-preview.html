@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Email templates — preview</title>
+<style>
+  :root {
+    --mist:#E6ECF2; --cobalt:#1331C2; --cobalt-deep:#062870;
+    --ink:#0B1220; --muted:#5C6B82; --bone:#F4EFE2; --brass:#C9A24A;
+  }
+  *,*::before,*::after { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--mist); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+    padding:48px 24px 96px;
+  }
+  .header {
+    max-width:1280px; margin:0 auto 32px;
+    padding-bottom:24px; border-bottom:1px solid rgba(11,18,32,0.10);
+  }
+  .eyebrow { font-size:11px; letter-spacing:0.22em; text-transform:uppercase; color:var(--cobalt); font-weight:600; }
+  h1 { font-family:Georgia,'Times New Roman',serif; font-weight:500; font-size:32px; margin:10px 0 6px; letter-spacing:-0.01em; }
+  .sub { color:var(--muted); font-size:14px; max-width:560px; line-height:1.55; }
+  .tabs { display:flex; gap:8px; margin-top:20px; }
+  .tab {
+    appearance:none; border:1px solid rgba(11,18,32,0.15); background:#fff;
+    padding:10px 16px; font:inherit; font-size:13px; letter-spacing:0.04em;
+    cursor:pointer; border-radius:2px; color:var(--ink);
+  }
+  .tab.active { background:var(--cobalt); color:#fff; border-color:var(--cobalt); }
+  .grid {
+    max-width:1280px; margin:0 auto;
+    display:grid; grid-template-columns:1fr; gap:32px;
+  }
+  .card {
+    background:#fff; border:1px solid rgba(11,18,32,0.08); border-radius:4px;
+    overflow:hidden; display:flex; flex-direction:column;
+  }
+  .card-head {
+    padding:14px 20px; border-bottom:1px solid rgba(11,18,32,0.08);
+    display:flex; justify-content:space-between; align-items:center;
+    background:#fafbfc;
+  }
+  .card-head .name { font-weight:600; font-size:13px; }
+  .card-head .meta { font-size:11px; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; }
+  iframe { width:100%; height:1100px; border:0; background:#fff; display:block; }
+  .ctx-label {
+    padding:10px 20px;
+    background:#f4f6f9;
+    border-top:1px solid rgba(11,18,32,0.08);
+    border-bottom:1px solid rgba(11,18,32,0.08);
+    font-family:'JetBrains Mono', ui-monospace, monospace;
+    font-size:10px; letter-spacing:0.16em; text-transform:uppercase;
+    color:var(--cobalt-deep); font-weight:600;
+  }
+  .ctx-label::before {
+    content:""; display:inline-block; width:5px; height:5px; border-radius:50%;
+    background:var(--brass); margin-right:10px; vertical-align:2px;
+  }
+  .hidden { display:none; }
+  @media (min-width:1100px) {
+    .grid.both { grid-template-columns:1fr 1fr; }
+  }
+
+  /* Preset badge row — quick "feel" cues above each card */
+  .badges { display:flex; gap:6px; align-items:center; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); }
+  .badge { padding:3px 8px; background:rgba(19,49,194,0.08); color:var(--cobalt-deep); border-radius:2px; font-weight:600; letter-spacing:0.1em; }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="components/tweaks-panel.jsx"></script>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useMemo } = React;
+
+// ─────────────────────────────────────────────────────────────────
+// Persisted defaults — three "feel" axes, each with three presets.
+// EDITMODE-BEGIN block is rewritten on disk by the host on change.
+// ─────────────────────────────────────────────────────────────────
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "voice": "editorial",
+  "composition": "editorial",
+  "header": "ink",
+  "context": "all"
+}/*EDITMODE-END*/;
+
+// Sample enquiry payload (matches what api/enquiry.js would pass).
+const SAMPLE = {
+  name:    "Lim Wei Ling",
+  email:   "wei.ling@studio-kin.sg",
+  phone:   "+65 9123 4567",
+  subject: "Talent enquiry for Q1 cultural campaign",
+  message: "Hi GEMS,<br/><br/>We're putting together a Lunar New Year campaign for a regional FMCG brand and would love to chat about Ayesha and Jaya for the lead spots. Shoot dates are tentatively Jan 18–22, Singapore + KL. Budget is mid-five-figures all-in.<br/><br/>Could we hop on a quick call this week to discuss availability?<br/><br/>Thanks!<br/>Wei Ling",
+  rawMessage: "...",
+  receivedAt: new Date().toUTCString(),
+};
+
+// Load a CommonJS template file (module.exports = function...) into a callable fn.
+async function loadTemplate(file) {
+  const res = await fetch(file);
+  const src = await res.text();
+  const fnStart = src.indexOf("function");
+  const argOpen = src.indexOf("(", fnStart);
+  const argClose = src.indexOf(")", argOpen);
+  const bodyOpen = src.indexOf("{", argClose);
+  let depth = 0, bodyClose = -1;
+  for (let i = bodyOpen; i < src.length; i++) {
+    if (src[i] === "{") depth++;
+    else if (src[i] === "}") { depth--; if (depth === 0) { bodyClose = i; break; } }
+  }
+  const arg = src.slice(argOpen+1, argClose).trim();
+  const body = src.slice(bodyOpen+1, bodyClose);
+  // Function accepts (d, opts) — second param defaults to undefined inside template.
+  return new Function(arg, body);
+}
+
+function useTemplates() {
+  const [tpls, setTpls] = useState(null);
+  useEffect(() => {
+    (async () => {
+      const [team, auto] = await Promise.all([
+        loadTemplate("email-templates/team-notification.js"),
+        loadTemplate("email-templates/auto-reply.js"),
+      ]);
+      setTpls({ team, auto });
+    })();
+  }, []);
+  return tpls;
+}
+
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [view, setView] = useState("both"); // both | team | auto
+  const tpls = useTemplates();
+
+  // ── Context payload ─────────────────────────────────────────────────
+  // The live endpoint validates + escapes context before passing it to
+  // the templates (see api/enquiry.js → safeContext). The preview
+  // replicates that shape directly so we render exactly what a real
+  // enquiry would produce — brass pill, slug, escaped label.
+  const CONTEXT_PRESETS = {
+    none:    null,
+    artiste: { kind: "artiste", slug: "shila-amzah",      label: "Shila Amzah",                          rawLabel: "Shila Amzah",                          kindLabel: "Artiste" },
+    service: { kind: "service", slug: "events-management", label: "Events Management &amp; Logistics",     rawLabel: "Events Management & Logistics",        kindLabel: "Service" },
+  };
+  const CONTEXT_KEYS = ["none","artiste","service"];
+
+  // Pass stampUrl as an opt so the preview always loads the GEMS stamp
+  // from local /assets/ regardless of where the production CDN lives.
+  // Production emails still use STAMP_URL env var or the default.
+  const opts = useMemo(() => ({
+    ...t,
+    stampUrl: location.origin + location.pathname.replace(/[^/]+$/, "") + "assets/gems-stamp-nav.jpg",
+  }), [t]);
+
+  // Inject a <base href> so any other relative asset URLs resolve inside the srcDoc iframe.
+  const withBase = (html) => {
+    const base = `<base href="${location.href}">`;
+    return html.replace(/<head>/i, `<head>${base}`);
+  };
+
+  // Pre-render every context state for both templates. Cheap (string
+  // concat) and lets the "all three" mode render a stacked comparison
+  // without thrashing useMemo dependencies.
+  const renders = useMemo(() => {
+    if (!tpls) return {};
+    const out = {};
+    for (const k of CONTEXT_KEYS) {
+      const sample = { ...SAMPLE, context: CONTEXT_PRESETS[k] };
+      out[k] = {
+        team: withBase(tpls.team(sample, opts)),
+        auto: withBase(tpls.auto(sample, opts)),
+      };
+    }
+    return out;
+  }, [tpls, opts]);
+
+  const contextsToShow = t.context === "all" ? CONTEXT_KEYS : [t.context];
+  const iframeHeight = t.context === "all" ? 880 : 1100;
+  const contextLabel = (k) =>
+    k === "none"    ? "No deep-link context"      :
+    k === "artiste" ? "From ?artiste=shila-amzah" :
+                      "From ?service=events-management";
+
+  return (
+    <>
+      <div className="header">
+        <div className="eyebrow">GEMS Talent</div>
+        <h1>Enquiry email templates</h1>
+        <p className="sub">
+          Two emails fire on every form submission — one to your team, one to the enquirer.
+          Use the <strong>Tweaks</strong> panel to reshape the feel across three axes;
+          your choice persists.
+        </p>
+        <div className="tabs" role="tablist">
+          {["both","team","auto"].map(v => (
+            <button key={v} className={`tab ${view===v?"active":""}`} onClick={() => setView(v)}>
+              {v === "both" ? "Both" : v === "team" ? "Team notification" : "Auto-reply"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className={`grid ${view==="both"?"both":""}`}>
+        <div className={`card ${view!=="both" && view!=="team"?"hidden":""}`}>
+          <div className="card-head">
+            <div className="name">Team notification <span style={{color:"var(--muted)",fontWeight:400}}>→ talent@gems.sg</span></div>
+            <div className="badges">
+              <span className="badge">{t.voice}</span>
+              <span className="badge">{t.composition}</span>
+              <span className="badge">{t.header}</span>
+              {t.context !== "none" && t.context !== "all" && <span className="badge">{t.context}</span>}
+              {t.context === "all" && <span className="badge">all 3 contexts</span>}
+            </div>
+          </div>
+          {contextsToShow.map((k) => (
+            <div key={k}>
+              {t.context === "all" && (
+                <div className="ctx-label">{contextLabel(k)}</div>
+              )}
+              <iframe title={`Team — ${k}`} srcDoc={renders[k] && renders[k].team} style={{height: iframeHeight}}/>
+            </div>
+          ))}
+        </div>
+        <div className={`card ${view!=="both" && view!=="auto"?"hidden":""}`}>
+          <div className="card-head">
+            <div className="name">Auto-reply <span style={{color:"var(--muted)",fontWeight:400}}>→ enquirer's inbox</span></div>
+            <div className="badges">
+              <span className="badge">{t.voice}</span>
+              <span className="badge">{t.composition}</span>
+              <span className="badge">{t.header}</span>
+              {t.context !== "none" && t.context !== "all" && <span className="badge">{t.context}</span>}
+              {t.context === "all" && <span className="badge">all 3 contexts</span>}
+            </div>
+          </div>
+          {contextsToShow.map((k) => (
+            <div key={k}>
+              {t.context === "all" && (
+                <div className="ctx-label">{contextLabel(k)}</div>
+              )}
+              <iframe title={`Auto — ${k}`} srcDoc={renders[k] && renders[k].auto} style={{height: iframeHeight}}/>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <TweaksPanel>
+        <TweakSection label="Voice">
+          <TweakRadio
+            label="Tone"
+            sublabel="Editorial = current. Warm dials up sincerity; crisp strips it back to a log entry."
+            value={t.voice}
+            options={["editorial","warm","crisp"]}
+            onChange={(v) => setTweak("voice", v)}
+          />
+        </TweakSection>
+
+        <TweakSection label="Composition">
+          <TweakRadio
+            label="Type & density"
+            sublabel="Editorial leads with serif headlines and a bone receipt card. Minimal swaps to sans and pulls margins tight. Display oversizes the type and lays a brass rule under the header."
+            value={t.composition}
+            options={["editorial","minimal","display"]}
+            onChange={(v) => setTweak("composition", v)}
+          />
+        </TweakSection>
+
+        <TweakSection label="Brand bar">
+          <TweakRadio
+            label="Header style"
+            sublabel="Cobalt is the deep-blue masthead with brass accent. Bone inverts to a paper-stock slab. Ink is a stark all-caps label on black."
+            value={t.header}
+            options={["cobalt","bone","ink"]}
+            onChange={(v) => setTweak("header", v)}
+          />
+        </TweakSection>
+
+        <TweakSection label="Deep-link context">
+          <TweakRadio
+            label="Enquiry source"
+            sublabel="Simulates the ?artiste= / ?service= query param that contact.html forwards with the POST. ‘All three’ stacks every context state so you can compare side-by-side before deploying."
+            value={t.context}
+            options={["none","artiste","service","all"]}
+            onChange={(v) => setTweak("context", v)}
+          />
+        </TweakSection>
+      </TweaksPanel>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+
+</body>
+</html>

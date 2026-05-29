@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Artistes — GEMS Talent</title>
+
+  <meta name="description" content="Vocalists, performers, and recording artistes represented by GEMS Talent — Shila Amzah, Chriz Tong, Theresa Carpio, Lawrence Wong." />
+  <link rel="canonical" href="https://gemstalent.com.sg/artistes" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="assets/gems-stamp-nav.jpg" />
+  <link rel="apple-touch-icon" href="assets/gems-stamp-nav.jpg" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="GEMS Talent" />
+  <meta property="og:title" content="Artistes — GEMS Talent" />
+  <meta property="og:description" content="Vocalists, performers, and recording artistes represented by GEMS Talent — Shila Amzah, Chriz Tong, Theresa Carpio, Lawrence Wong." />
+  <meta property="og:url" content="https://gemstalent.com.sg/artistes" />
+  <meta property="og:image" content="https://gemstalent.com.sg/assets/og-card-photo.png" />
+  <meta property="og:locale" content="en_SG" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Artistes — GEMS Talent" />
+  <meta name="twitter:description" content="Vocalists, performers, and recording artistes represented by GEMS Talent — Shila Amzah, Chriz Tong, Theresa Carpio, Lawrence Wong." />
+  <meta name="twitter:image" content="https://gemstalent.com.sg/assets/og-card-photo.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <link rel="stylesheet" href="styles/styles.css" />
+  <link rel="stylesheet" href="styles/responsive.css" />
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    body[data-brass="default"]{--brass:#C9A961;--brass-soft:#b89548}
+    /* Artiste detail page-local styles */
+    .artiste-detail{ scroll-margin-top: 96px; }
+    .artiste-detail + .artiste-detail{ border-top: 1px solid var(--hair); }
+    .artiste-detail--ink{ background: var(--cobalt-deep); color: var(--bone); }
+    .artiste-detail--ink .eyebrow{ color: rgba(250,247,242,0.65); }
+    .artiste-detail--ink .a-rail{ color: rgba(250,247,242,0.55); }
+    .artiste-detail--ink .a-rail .num{ color: var(--teal); }
+    .artiste-detail--ink .a-meta dt{ color: rgba(250,247,242,0.55); }
+    .artiste-detail--ink .a-meta dd{ color: var(--bone); }
+    .artiste-detail--ink .a-meta{ border-color: rgba(250,247,242,0.18); }
+    .artiste-detail--ink .a-notable .row{ border-color: rgba(250,247,242,0.14); }
+    .artiste-detail--ink .a-notable .year{ color: var(--teal-soft); }
+    .artiste-detail--ink .a-notable .role{ color: rgba(250,247,242,0.7); }
+    .artiste-detail--ink .a-notable .project{ color: var(--bone); }
+    .a-grid{
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .a-portrait{
+      position: relative;
+      aspect-ratio: 4/5;
+      overflow: hidden;
+      background: #16243b;
+    }
+    .a-portrait img{
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; object-fit: cover;
+      filter: brightness(0.95) saturate(0.97);
+    }
+    .a-portrait .corner{
+      position: absolute; top: 16px; left: 16px;
+      font-family: var(--mono); font-size: 10.5px;
+      color: rgba(250,247,242,0.8);
+      letter-spacing: 0.08em;
+    }
+    .a-portrait .name-strip{
+      position: absolute; left: 16px; right: 16px; bottom: 14px;
+      display: flex; justify-content: space-between; align-items: flex-end;
+      font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.06em;
+      text-transform: uppercase; color: rgba(250,247,242,0.85);
+    }
+    .a-rail{
+      font-size: var(--eyebrow); font-weight: 500;
+      letter-spacing: var(--tracking-eye); text-transform: uppercase;
+      color: var(--slate); margin-bottom: 32px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .a-rail .num{ color: var(--brass); font-family: var(--sans); }
+    .a-name{ font-size: clamp(56px, 6vw, 96px); line-height: 0.95; letter-spacing: -0.025em; font-weight: 500; max-width: 14ch; }
+    .a-tag{ font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 24px; color: var(--slate); }
+    .artiste-detail--ink .a-tag{ color: rgba(250,247,242,0.7); }
+    .a-bio{ font-size: 17px; line-height: 1.55; color: var(--slate); margin-top: 36px; max-width: 50ch; }
+    .artiste-detail--ink .a-bio{ color: rgba(250,247,242,0.78); }
+    .a-bio p + p{ margin-top: 16px; }
+    .a-meta{
+      margin-top: 44px;
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      column-gap: 32px; row-gap: 22px;
+      border-top: 1px solid var(--hair); padding-top: 28px;
+    }
+    .a-meta dt{ font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--slate); margin-bottom: 6px; }
+    .a-meta dd{ font-size: 15px; color: var(--ink); }
+    .a-notable{ margin-top: 48px; }
+    .a-notable .head{
+      font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--slate); padding-bottom: 16px; border-bottom: 1px solid var(--hair);
+    }
+    .a-notable .row{
+      display: grid;
+      grid-template-columns: 60px 1fr 1.4fr;
+      gap: 24px; align-items: baseline;
+      padding: 18px 0; border-bottom: 1px solid var(--hair);
+    }
+    .a-notable .year{ font-family: var(--mono); font-size: 12px; color: var(--cobalt); letter-spacing: 0.06em; }
+    .a-notable .role{ font-size: 13px; color: var(--slate); }
+    .a-notable .project{ font-size: 15px; color: var(--ink); }
+    .a-actions{ margin-top: 40px; display: flex; gap: 12px; flex-wrap: wrap; }
+    .a-gallery{
+      margin-top: 88px;
+      display: grid; gap: 16px;
+    }
+    .a-gallery img{
+      width: 100%; aspect-ratio: 4/3; object-fit: cover;
+      background: #14213b; display: block;
+    }
+    .a-gallery .g-2{ display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }
+    .a-gallery .g-3{ display: grid; gap: 16px; grid-template-columns: 1.4fr 1fr 1fr; }
+    .a-gallery .g-tall{ aspect-ratio: 3/4; }
+    /* Roster index strip at top */
+    .a-index{
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 18px; padding: 64px 0 24px;
+      border-bottom: 1px solid var(--hair);
+    }
+    .a-index a{
+      display: block; padding: 18px 0;
+      border-top: 1px solid var(--hair-strong);
+      transition: border-color 200ms ease;
+    }
+    .a-index a:hover{ border-top-color: var(--cobalt); }
+    .a-index .ix-name{ font-size: 17px; font-weight: 500; letter-spacing: -0.01em; }
+    .a-index .ix-tag{ font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--slate); margin-top: 8px; }
+    .a-index .ix-num{ font-family: var(--mono); font-size: 11px; color: var(--brass); letter-spacing: 0.06em; }
+  </style>
+</head>
+<body data-brass="default">
+  <script src="data.js"></script>
+  <div id="root"></div>
+  <script type="text/babel" src="components/nav.jsx"></script>
+  <script type="text/babel" src="components/sections.jsx"></script>
+  <script type="text/babel" src="components/page-header.jsx"></script>
+  <script type="text/babel" data-presets="env,react">
+    const { useState, useEffect } = React;
+    const D = window.GEMS_DATA;
+
+    function RosterIndex({ artistes }) {
+      return (
+        <div className="container">
+          <div className="a-index">
+            {artistes.map((a, i) => (
+              <a key={a.slug} href={"#" + a.slug}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
+                  <span className="ix-num">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="ix-num" style={{ color: "var(--slate)" }}>→</span>
+                </div>
+                <div className="ix-name">{a.name}</div>
+                <div className="ix-tag">{a.tag}</div>
+              </a>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function Gallery({ images }) {
+      if (!images || images.length < 2) return null;
+      // Pick up to 6 to keep the detail block focused
+      const g = images.slice(0, 6);
+      if (g.length === 2) {
+        return (
+          <div className="a-gallery">
+            <div className="g-2">
+              <img src={g[0]} alt="" />
+              <img src={g[1]} alt="" />
+            </div>
+          </div>
+        );
+      }
+      if (g.length <= 4) {
+        return (
+          <div className="a-gallery">
+            <div className="g-3">
+              <img src={g[0]} alt="" />
+              <img src={g[1]} className="g-tall" alt="" />
+              <img src={g[2]} className="g-tall" alt="" />
+            </div>
+            {g[3] && <div className="g-2"><img src={g[3]} alt="" />{g[4] ? <img src={g[4]} alt="" /> : <div style={{background:"#0f1a2c"}}/>}</div>}
+          </div>
+        );
+      }
+      return (
+        <div className="a-gallery">
+          <div className="g-3">
+            <img src={g[0]} alt="" />
+            <img src={g[1]} className="g-tall" alt="" />
+            <img src={g[2]} className="g-tall" alt="" />
+          </div>
+          <div className="g-2">
+            <img src={g[3]} alt="" />
+            <img src={g[4]} alt="" />
+          </div>
+          {g[5] && (
+            <div className="g-2">
+              <img src={g[5]} alt="" />
+              <div style={{ aspectRatio: "4/3", background: "transparent" }} />
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    function ArtisteDetail({ a, idx }) {
+      const isInk = idx % 2 === 1; // alternate light / cobalt-deep
+      const gallery = a.gallery ? (D[a.gallery] || []) : [];
+      return (
+        <section
+          id={a.slug}
+          className={"section artiste-detail" + (isInk ? " artiste-detail--ink" : "")}
+          data-screen-label={String(idx + 1).padStart(2, "0") + " " + a.name}
+          style={{ paddingTop: 120, paddingBottom: 120 }}
+        >
+          <div className="container">
+            <div className="a-grid">
+              <div className="a-portrait">
+                <img src={a.portrait || a.image} alt={a.name} />
+                <div className="corner">{String(idx + 1).padStart(2, "0")} / {String(D.roster.length).padStart(2, "0")}</div>
+                <div className="name-strip">
+                  <span>{a.name}</span>
+                  <span>{(a.based || "").split(" · ")[0]}</span>
+                </div>
+              </div>
+              <div>
+                <div className="a-rail">
+                  <span className="num">{String(idx + 1).padStart(2, "0")}</span>
+                  <span>The roster</span>
+                </div>
+                <h2 className="a-name">{a.name}.</h2>
+                <div className="a-tag">{a.discipline}</div>
+                <div className="a-bio">
+                  {a.bio.map((p, i) => <p key={i}>{p}</p>)}
+                </div>
+                <dl className="a-meta">
+                  <div>
+                    <dt>Based</dt>
+                    <dd>{a.based}</dd>
+                  </div>
+                  <div>
+                    <dt>Languages</dt>
+                    <dd>{a.languages}</dd>
+                  </div>
+                </dl>
+                <div className="a-notable">
+                  <div className="head">Selected work</div>
+                  {a.notable.map((n, i) => (
+                    <div key={i} className="row">
+                      <span className="year">{n.year}</span>
+                      <span className="role">{n.role}</span>
+                      <span className="project">{n.project}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="a-actions">
+                  <a
+                    href={"contact.html?artiste=" + encodeURIComponent(a.slug) + "#brief"}
+                    className={isInk ? "btn btn--ghost-bone" : "btn btn--ghost-ink"}
+                    style={{ height: 52, padding: "0 24px" }}
+                  >
+                    Enquire about {a.name.split(" ")[0]} <ArrowRight size={14} />
+                  </a>
+                  {a.relatedWork && (
+                    <a
+                      href={"work.html#" + a.relatedWork}
+                      className={isInk ? "btn btn--ghost-bone" : "btn btn--ghost-ink"}
+                      style={{ height: 52, padding: "0 24px" }}
+                    >
+                      See related work <ArrowRight size={14} />
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+            <Gallery images={gallery} />
+          </div>
+        </section>
+      );
+    }
+
+    function App() {
+      const roster = D.roster;
+      // If the page loaded with a hash, scroll once data is rendered
+      useEffect(() => {
+        document.body.setAttribute("data-brass", "default");
+        if (window.location.hash) {
+          // Defer a tick to ensure the target section is mounted
+          setTimeout(() => {
+            const el = document.querySelector(window.location.hash);
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 80);
+        }
+      }, []);
+      return (
+        <>
+          <Nav condensed={true} />
+          <main>
+            <PageHeader
+              eyebrow={{ num: "02", label: "The roster" }}
+              title={<><span>The voices and performers we represent.</span></>}
+              sub="A curated roster of artistes across vocal, performance, and on-camera — represented end-to-end from booking to broadcast."
+              image={roster[0].portrait || roster[0].image}
+            />
+            <RosterIndex artistes={roster} />
+            {roster.map((a, i) => (
+              <ArtisteDetail key={a.slug} a={a} idx={i} />
+            ))}
+            <FooterCTA variant="join" useSerif={false} />
+          </main>
+          <Footer />
+        </>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

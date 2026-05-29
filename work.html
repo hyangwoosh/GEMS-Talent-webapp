@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Work — GEMS Talent</title>
+
+  <meta name="description" content="Selected work — RWS Exclusive Showcase with Shila Amzah, Grasshopper · Be Three Live with Chriz Tong, and an evening with Theresa Carpio." />
+  <link rel="canonical" href="https://gemstalent.com.sg/work" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="assets/gems-stamp-nav.jpg" />
+  <link rel="apple-touch-icon" href="assets/gems-stamp-nav.jpg" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="GEMS Talent" />
+  <meta property="og:title" content="Work — GEMS Talent" />
+  <meta property="og:description" content="Selected work — RWS Exclusive Showcase with Shila Amzah, Grasshopper · Be Three Live with Chriz Tong, and an evening with Theresa Carpio." />
+  <meta property="og:url" content="https://gemstalent.com.sg/work" />
+  <meta property="og:image" content="https://gemstalent.com.sg/assets/og-card-photo.png" />
+  <meta property="og:locale" content="en_SG" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Work — GEMS Talent" />
+  <meta name="twitter:description" content="Selected work — RWS Exclusive Showcase with Shila Amzah, Grasshopper · Be Three Live with Chriz Tong, and an evening with Theresa Carpio." />
+  <meta name="twitter:image" content="https://gemstalent.com.sg/assets/og-card-photo.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <link rel="stylesheet" href="styles/styles.css" />
+  <link rel="stylesheet" href="styles/responsive.css" />
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    body[data-brass="default"]{--brass:#C9A961;--brass-soft:#b89548}
+    .case-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;padding:40px 0;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+    .case-meta dt{font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:8px}
+    .case-meta dd{font-size:16px;color:var(--ink);font-weight:500}
+    .gallery-grid{display:grid;gap:16px}
+    .gal-2{grid-template-columns:1fr 1fr}
+    .gal-3{grid-template-columns:2fr 1fr 1fr}
+    .gal-asym{grid-template-columns:1.6fr 1fr;grid-template-rows:auto auto}
+    .gallery-grid img{width:100%;height:100%;object-fit:cover;display:block;background:#0f1a2c;aspect-ratio:4/3}
+    .gallery-grid .tall{aspect-ratio:3/4}
+    .gallery-grid .wide{aspect-ratio:16/9}
+  </style>
+</head>
+<body data-brass="default">
+  <script src="data.js"></script>
+  <div id="root"></div>
+  <script type="text/babel" src="components/nav.jsx"></script>
+  <script type="text/babel" src="components/sections.jsx"></script>
+  <script type="text/babel" src="components/page-header.jsx"></script>
+  <script type="text/babel" data-presets="env,react">
+    const { useState, useEffect } = React;
+    const D = window.GEMS_DATA;
+
+    function CaseMeta({ items }) {
+      return (
+        <dl className="case-meta">
+          {items.map(([k, v]) => (
+            <div key={k}>
+              <dt>{k}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))}
+        </dl>
+      );
+    }
+
+    function CaseHeader({ idx, eyebrow, title, sub }) {
+      return (
+        <div className="rail-grid" style={{ marginBottom: 48 }}>
+          <div className="sec-rail"><span className="num">{idx}</span>{eyebrow}</div>
+          <div>
+            <h2 className="h1" style={{ maxWidth: "20ch" }}>{title}</h2>
+            {sub && <p className="lede" style={{ marginTop: 24, color: "var(--slate)" }}>{sub}</p>}
+          </div>
+        </div>
+      );
+    }
+
+    function GalleryRWS() {
+      const g = D.rwsGallery;
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div className="gallery-grid gal-asym">
+            <img src={g[0]} className="wide" alt="" style={{ gridRow: "span 2" }} />
+            <img src={g[1]} alt="" />
+            <img src={g[2]} alt="" />
+          </div>
+          <div className="gallery-grid gal-3">
+            <img src={g[3]} alt="" />
+            <img src={g[4]} className="tall" alt="" />
+            <img src={g[5]} className="tall" alt="" />
+          </div>
+          <div className="gallery-grid gal-2">
+            <img src={g[6]} alt="" />
+            <img src={g[7]} alt="" />
+          </div>
+          <div className="gallery-grid gal-3">
+            <img src={g[8]} alt="" />
+            <img src={g[9]} alt="" />
+            <img src={g[10]} alt="" />
+          </div>
+          <div className="gallery-grid gal-2">
+            <img src={g[11]} alt="" />
+            <img src={g[12]} alt="" />
+          </div>
+        </div>
+      );
+    }
+
+    function GalleryChriz() {
+      const g = D.chrizGallery;
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div className="gallery-grid gal-2">
+            <img src={g[0]} alt="" />
+            <img src={g[1]} alt="" />
+          </div>
+          <div className="gallery-grid gal-3">
+            <img src={g[2]} alt="" />
+            <img src={g[3]} className="tall" alt="" />
+            <img src={g[4]} className="tall" alt="" />
+          </div>
+          <div className="gallery-grid gal-2">
+            <img src={g[5]} alt="" />
+            <img src={g[6]} alt="" />
+          </div>
+        </div>
+      );
+    }
+
+    function GalleryTheresa() {
+      const g = D.theresaGallery;
+      return (
+        <div className="gallery-grid gal-2">
+          <img src={g[0]} alt="" />
+          <img src={g[1]} alt="" />
+        </div>
+      );
+    }
+
+    function App() {
+      return (
+        <>
+          <Nav condensed={true} />
+          <main>
+            <PageHeader
+              eyebrow={{ num: "01", label: "Recent work" }}
+              title={<><span>Selected stages,</span><br/><span>screens, and broadcasts.</span></>}
+              sub="From an exclusive showcase at Resorts World Sentosa to concert appearances in Genting and Singapore — a curated selection of recent productions."
+              image={D.featured[0].image}
+            />
+
+            {/* CASE 01 — RWS */}
+            <section id="rws-exclusive-showcase" className="section" data-screen-label="01 RWS" style={{ scrollMarginTop: 96 }}>
+              <div className="container">
+                <CaseHeader
+                  idx="01"
+                  eyebrow="Resorts World Sentosa"
+                  title={<>RWS Exclusive Showcase <span className="serif-em">feat. Shila Amzah.</span></>}
+                  sub="An exclusive evening showcase at Resorts World Sentosa featuring the multi-platinum vocalist Shila Amzah — talent management, hospitality, and full event production."
+                />
+                <CaseMeta items={[
+                  ["Client", "Resorts World Sentosa"],
+                  ["Artiste", "Shila Amzah"],
+                  ["Year", "2025"],
+                  ["Services", "Talent · Hospitality · Production"],
+                ]} />
+                <div style={{ marginTop: 40 }}>
+                  <GalleryRWS />
+                </div>
+              </div>
+            </section>
+
+            {/* CASE 02 — Chriz Tong / Be Three */}
+            <section id="grasshopper-be-three-live" className="section section--ink" data-screen-label="02 Be Three" style={{ scrollMarginTop: 96 }}>
+              <div className="container">
+                <CaseHeader
+                  idx="02"
+                  eyebrow="Genting Highlands"
+                  title={<>Grasshopper · Be Three Live <span className="serif-em">feat. Chriz Tong.</span></>}
+                  sub="A featured artiste appearance for Chriz Tong in Grasshopper's 'Be Three' Live in Genting — talent representation, hospitality, and on-site logistics across two arena dates."
+                />
+                <CaseMeta items={[
+                  ["Client", "Resorts World Genting"],
+                  ["Artiste", "Chriz Tong"],
+                  ["Year", "2024"],
+                  ["Services", "Artiste · Hospitality · Logistics"],
+                ]} />
+                <div style={{ marginTop: 40 }}>
+                  <GalleryChriz />
+                </div>
+              </div>
+            </section>
+
+            {/* CASE 03 — Theresa Carpio */}
+            <section id="theresa-carpio-concert" className="section" data-screen-label="03 Theresa" style={{ scrollMarginTop: 96 }}>
+              <div className="container">
+                <CaseHeader
+                  idx="03"
+                  eyebrow="Singapore"
+                  title={<>An evening with <span className="serif-em">Theresa Carpio.</span></>}
+                  sub="A full-house concert evening with the legendary Hong Kong vocalist Theresa Carpio — production, marketing, and event logistics from concept through curtain."
+                />
+                <CaseMeta items={[
+                  ["Client", "GEMS Productions"],
+                  ["Artiste", "Theresa Carpio"],
+                  ["Year", "2024"],
+                  ["Services", "Production · Marketing"],
+                ]} />
+                <div style={{ marginTop: 40 }}>
+                  <GalleryTheresa />
+                </div>
+              </div>
+            </section>
+
+            <FooterCTA variant="work" useSerif={false} />
+          </main>
+          <Footer />
+        </>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

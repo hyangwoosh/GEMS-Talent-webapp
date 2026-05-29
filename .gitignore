@@ -1,0 +1,63 @@
+# ────────────────────────────────────────────────────────────────
+# GEMS Talent — .gitignore
+#
+# This project is intentionally build-step-free (React via Babel CDN,
+# zero npm dependencies for the site itself). Most "modern web project"
+# ignores below are defensive — they exist so that if you later add a
+# tool that drops one of these folders, it doesn't pollute the repo.
+# ────────────────────────────────────────────────────────────────
+
+# Node / npm — none currently in use, but block by default
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+
+# Environment files — NEVER commit real secrets
+# (Resend API key, Upstash token, etc. live in the host's env vars, not here)
+.env
+.env.local
+.env.*.local
+.env.production
+
+# Build / deploy artifacts
+dist/
+build/
+.next/
+out/
+
+# Host CLI caches
+.netlify/
+.vercel/
+
+# Editor / OS cruft
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+
+# Test coverage / artifacts (none currently, defensive)
+coverage/
+.nyc_output/
+
+# Local script outputs — scripts/download-cdn-images.mjs writes here
+# (commit the downloaded images explicitly when ready; ignore until then)
+# Uncomment the next line if you DON'T want to commit downloaded CDN images:
+# assets/cdn/
+
+# Local Claude / IDE assistant caches
+.claude/
+.cursor/
+
+# Misc
+*.tmp
+*.bak

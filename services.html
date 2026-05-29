@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Services — GEMS Talent</title>
+
+  <meta name="description" content="Entertainment marketing, advertising & PR, events management, and specialised projects — the four practices of GEMS Talent." />
+  <link rel="canonical" href="https://gemstalent.com.sg/services" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="assets/gems-stamp-nav.jpg" />
+  <link rel="apple-touch-icon" href="assets/gems-stamp-nav.jpg" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="GEMS Talent" />
+  <meta property="og:title" content="Services — GEMS Talent" />
+  <meta property="og:description" content="Entertainment marketing, advertising & PR, events management, and specialised projects — the four practices of GEMS Talent." />
+  <meta property="og:url" content="https://gemstalent.com.sg/services" />
+  <meta property="og:image" content="https://gemstalent.com.sg/assets/og-card.png" />
+  <meta property="og:locale" content="en_SG" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Services — GEMS Talent" />
+  <meta name="twitter:description" content="Entertainment marketing, advertising & PR, events management, and specialised projects — the four practices of GEMS Talent." />
+  <meta name="twitter:image" content="https://gemstalent.com.sg/assets/og-card.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <link rel="stylesheet" href="styles/styles.css" />
+  <link rel="stylesheet" href="styles/responsive.css" />
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    body[data-brass="default"]{--brass:#C9A961;--brass-soft:#b89548}
+
+    /* ───────── Service index strip (top) ───────── */
+    .s-index{
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      padding: 64px 0 24px;
+      border-bottom: 1px solid var(--hair);
+    }
+    .s-index a{
+      display: block; padding: 22px 28px;
+      border-top: 1px solid var(--hair-strong);
+      transition: border-color 200ms ease, transform 200ms ease;
+      border-right: 1px solid var(--hair);
+    }
+    .s-index a:first-child{ padding-left: 0; }
+    .s-index a:last-child{ border-right: none; padding-right: 0; }
+    .s-index a:hover{ border-top-color: var(--cobalt); transform: translateX(6px); }
+    .s-index .ix-num{
+      font-family: var(--mono); font-size: 11px; color: var(--brass);
+      letter-spacing: 0.06em;
+    }
+    .s-index .ix-title{
+      font-size: 19px; font-weight: 500; letter-spacing: -0.01em;
+      margin-top: 6px;
+    }
+    .s-index .ix-tag{
+      font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.10em;
+      text-transform: uppercase; color: var(--slate); margin-top: 10px;
+    }
+
+    /* ───────── Per-service detail block ───────── */
+    .svc-detail{ scroll-margin-top: 96px; }
+    .svc-detail--ink{ background: var(--cobalt-deep); color: var(--bone); }
+    .svc-detail--ink .s-rail{ color: rgba(250,247,242,0.55); }
+    .svc-detail--ink .s-rail .num{ color: var(--teal); }
+    .svc-detail--ink .s-tag{ color: rgba(250,247,242,0.7); }
+    .svc-detail--ink .s-desc{ color: rgba(250,247,242,0.78); }
+    .svc-detail--ink .deliv .row{ border-color: rgba(250,247,242,0.14); }
+    .svc-detail--ink .deliv .head{ color: rgba(250,247,242,0.55); border-color: rgba(250,247,242,0.22); }
+    .svc-detail--ink .deliv .item{ color: var(--bone); }
+    .svc-detail--ink .deliv .item-num{ color: var(--teal-soft); }
+    .svc-detail--ink .cases .row{ border-color: rgba(250,247,242,0.14); }
+    .svc-detail--ink .cases .head{ color: rgba(250,247,242,0.55); border-color: rgba(250,247,242,0.22); }
+    .svc-detail--ink .cases .project{ color: var(--bone); }
+    .svc-detail--ink .cases .note{ color: rgba(250,247,242,0.65); }
+    .svc-detail--ink .s-meta-strip{ border-color: rgba(250,247,242,0.22); color: rgba(250,247,242,0.7); }
+
+    .svc-grid{
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .s-rail{
+      font-size: var(--eyebrow); font-weight: 500;
+      letter-spacing: var(--tracking-eye); text-transform: uppercase;
+      color: var(--slate); margin-bottom: 28px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .s-rail .num{ color: var(--brass); font-family: var(--sans); }
+    .s-num-display{
+      font-family: var(--sans); font-weight: 500;
+      font-size: clamp(72px, 9vw, 132px);
+      line-height: 0.9; letter-spacing: -0.03em;
+      color: var(--cobalt);
+      margin-bottom: 28px;
+    }
+    .svc-detail--ink .s-num-display{ color: var(--teal); }
+    .s-title{
+      font-size: clamp(44px, 5.2vw, 76px); line-height: 0.98;
+      letter-spacing: -0.025em; font-weight: 500;
+      max-width: 14ch;
+    }
+    .s-tag{
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
+      text-transform: uppercase; margin-top: 22px; color: var(--slate);
+    }
+    .s-desc{
+      font-size: 17px; line-height: 1.55; color: var(--slate);
+      margin-top: 32px; max-width: 48ch;
+    }
+    .s-desc p + p{ margin-top: 16px; }
+    .s-meta-strip{
+      margin-top: 36px; padding-top: 18px;
+      border-top: 1px solid var(--hair);
+      display: flex; gap: 36px; flex-wrap: wrap;
+      font-family: var(--mono); font-size: 11px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--slate);
+    }
+    .s-meta-strip .k{ color: var(--brass); margin-right: 8px; }
+    .svc-detail--ink .s-meta-strip .k{ color: var(--teal-soft); }
+
+    /* Deliverables list (left column of grid) */
+    .deliv{ }
+    .deliv .head{
+      font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--slate); padding-bottom: 16px;
+      border-bottom: 1px solid var(--hair-strong);
+    }
+    .deliv .row{
+      display: grid; grid-template-columns: 36px 1fr;
+      gap: 20px; align-items: baseline;
+      padding: 18px 0; border-bottom: 1px solid var(--hair);
+    }
+    .deliv .item-num{
+      font-family: var(--mono); font-size: 11px; color: var(--cobalt);
+      letter-spacing: 0.06em;
+    }
+    .deliv .item{ font-size: 16px; color: var(--ink); letter-spacing: -0.005em; }
+
+    /* Selected cases — below the grid, full-width inside the column */
+    .cases{ margin-top: 56px; }
+    .cases .head{
+      font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--slate); padding-bottom: 14px;
+      border-bottom: 1px solid var(--hair-strong);
+    }
+    .cases .row{
+      display: grid; grid-template-columns: 1fr auto;
+      gap: 24px; align-items: baseline;
+      padding: 16px 0; border-bottom: 1px solid var(--hair);
+    }
+    .cases .project{ font-size: 15px; color: var(--ink); letter-spacing: -0.005em; }
+    .cases .note{
+      font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--slate); text-align: right;
+    }
+
+    .s-actions{ margin-top: 44px; display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* ───────── Process strip ───────── */
+    .process{
+      background: var(--sage); color: var(--ink);
+      padding: 140px 0;
+      border-top: 1px solid var(--hair);
+    }
+    .process .head{
+      display: grid; grid-template-columns: 200px 1fr;
+      gap: 64px; margin-bottom: 72px;
+    }
+    .process .steps{
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 32px;
+    }
+    .process .step{
+      padding: 32px 28px 36px 0;
+      border-top: 1px solid var(--hair-strong);
+      position: relative;
+    }
+    .process .step + .step{ border-left: 1px solid var(--hair); padding-left: 28px; }
+    .process .step .num{
+      font-family: var(--sans); font-weight: 500;
+      font-size: 56px; line-height: 0.95; letter-spacing: -0.025em;
+      color: var(--cobalt);
+    }
+    .process .step .t{
+      font-size: 22px; font-weight: 500; letter-spacing: -0.01em;
+      margin-top: 22px;
+    }
+    .process .step .d{
+      font-size: 14px; line-height: 1.55; color: var(--slate);
+      margin-top: 14px; max-width: 28ch;
+    }
+  </style>
+</head>
+<body data-brass="default">
+  <script src="data.js"></script>
+  <div id="root"></div>
+  <script type="text/babel" src="components/nav.jsx"></script>
+  <script type="text/babel" src="components/sections.jsx"></script>
+  <script type="text/babel" src="components/page-header.jsx"></script>
+  <script type="text/babel" data-presets="env,react">
+    const { useState, useEffect } = React;
+    const D = window.GEMS_DATA;
+
+    function ServiceIndex({ services }) {
+      return (
+        <div className="container">
+          <div className="s-index">
+            {services.map((s) => (
+              <a key={s.slug} href={"#" + s.slug}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                  <span className="ix-num">{s.n}</span>
+                  <span className="ix-num" style={{ color: "var(--slate)" }}>↓</span>
+                </div>
+                <div className="ix-title">
+                  {s.title}
+                </div>
+                <div className="ix-tag">{s.tagline}</div>
+              </a>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function ApproachIntro() {
+      return (
+        <section className="section" style={{ paddingTop: 96, paddingBottom: 32 }}>
+          <div className="container">
+            <div className="rail-grid">
+              <div className="sec-rail"><span className="num">·</span>Approach</div>
+              <div style={{ maxWidth: "62ch" }}>
+                <h2 className="h1" style={{ marginBottom: 32 }}>
+                  Held in one room, brief to wrap.
+                </h2>
+                <p style={{ fontSize: 18, lineHeight: 1.6, color: "var(--slate)", marginBottom: 16 }}>
+                  Most of our productions touch three or more of these practices —
+                  the management of an artiste, the direction of the music, the
+                  running of the room, the press around the launch.
+                </p>
+                <p style={{ fontSize: 18, lineHeight: 1.6, color: "var(--slate)" }}>
+                  A single team holds the brief end-to-end. Below, the four
+                  practices, what each delivers, and the projects they've shipped.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function ServiceDetail({ s, idx }) {
+      const isInk = idx % 2 === 1; // alternate mist / cobalt-deep
+      return (
+        <section
+          id={s.slug}
+          className={"section svc-detail" + (isInk ? " svc-detail--ink" : "")}
+          data-screen-label={s.n + " " + s.title}
+          style={{ paddingTop: 140, paddingBottom: 140 }}
+        >
+          <div className="container">
+            <div className="svc-grid">
+              {/* Left column — number + title + description */}
+              <div>
+                <div className="s-rail">
+                  <span className="num">{s.n}</span>
+                  <span>What we do · {s.n}/04</span>
+                </div>
+                <div className="s-num-display">{s.n}</div>
+                <h2 className="s-title">{s.title}</h2>
+                <div className="s-tag">{s.tagline}</div>
+                <div className="s-desc">
+                  {s.description.map((p, i) => <p key={i}>{p}</p>)}
+                </div>
+                <div className="s-meta-strip">
+                  <span><span className="k">Practice</span>{s.n}</span>
+                  <span><span className="k">Scope</span>End-to-end</span>
+                  <span><span className="k">Region</span>SG · MY · HK</span>
+                </div>
+                <div className="s-actions">
+                  <a
+                    href={"contact.html?service=" + encodeURIComponent(s.slug) + "#brief"}
+                    className={isInk ? "btn btn--ghost-bone" : "btn btn--ghost-ink"}
+                    style={{ height: 52, padding: "0 24px" }}
+                  >
+                    Brief us on {s.title.split(" ")[0].toLowerCase()} <ArrowRight size={14} />
+                  </a>
+                  <a
+                    href="work.html"
+                    className={isInk ? "btn btn--ghost-bone" : "btn btn--ghost-ink"}
+                    style={{ height: 52, padding: "0 24px" }}
+                  >
+                    See related work <ArrowRight size={14} />
+                  </a>
+                </div>
+              </div>
+
+              {/* Right column — deliverables + cases */}
+              <div>
+                <div className="deliv">
+                  <div className="head">Deliverables</div>
+                  {s.deliverables.map((d, i) => (
+                    <div key={i} className="row">
+                      <span className="item-num">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="item">{d}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="cases">
+                  <div className="head">Selected projects</div>
+                  {s.cases.map((c, i) => (
+                    <div key={i} className="row">
+                      <span className="project">{c.project}</span>
+                      <span className="note">{c.note}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function ProcessStrip({ steps }) {
+      return (
+        <section className="process" data-screen-label="Process">
+          <div className="container">
+            <div className="head">
+              <div className="sec-rail" style={{ position: "static" }}>
+                <span className="num">·</span>How we work
+              </div>
+              <div>
+                <h2 className="h1" style={{ maxWidth: "20ch" }}>
+                  Brief, scope, run, wrap.
+                </h2>
+                <p style={{ marginTop: 24, fontSize: 16, color: "var(--slate)", maxWidth: "52ch", lineHeight: 1.55 }}>
+                  Every engagement follows the same arc — light at the front,
+                  heavy in the middle, quiet at the end.
+                </p>
+              </div>
+            </div>
+            <div className="steps">
+              {steps.map((p) => (
+                <div key={p.n} className="step">
+                  <div className="num">{p.n}</div>
+                  <div className="t">{p.title}</div>
+                  <div className="d">{p.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function App() {
+      useEffect(() => {
+        document.body.setAttribute("data-brass", "default");
+        if (window.location.hash) {
+          setTimeout(() => {
+            const el = document.querySelector(window.location.hash);
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }, 80);
+        }
+      }, []);
+      const services = D.services;
+      return (
+        <>
+          <Nav condensed={true} />
+          <main>
+            <PageHeader
+              eyebrow={{ num: "03", label: "What we do" }}
+              title={<><span>Four practices, one studio.</span></>}
+              sub="Entertainment marketing, advertising & PR, events & logistics, and specialised projects — held by a single team, end-to-end."
+              image={D.backgrounds.ctaImg}
+            />
+            <ServiceIndex services={services} />
+            <ApproachIntro />
+            {services.map((s, i) => (
+              <ServiceDetail key={s.slug} s={s} idx={i} />
+            ))}
+            <ProcessStrip steps={D.process} />
+            <FooterCTA variant="work" useSerif={false} />
+          </main>
+          <Footer />
+        </>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

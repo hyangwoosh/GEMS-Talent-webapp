@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About — GEMS Talent</title>
+
+  <meta name="description" content="Twelve years representing artistes and shaping Singapore's stage. A small senior studio working across Singapore, Kuala Lumpur, and Jakarta." />
+  <link rel="canonical" href="https://gemstalent.com.sg/about" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="assets/gems-stamp-nav.jpg" />
+  <link rel="apple-touch-icon" href="assets/gems-stamp-nav.jpg" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="GEMS Talent" />
+  <meta property="og:title" content="About — GEMS Talent" />
+  <meta property="og:description" content="Twelve years representing artistes and shaping Singapore's stage. A small senior studio working across Singapore, Kuala Lumpur, and Jakarta." />
+  <meta property="og:url" content="https://gemstalent.com.sg/about" />
+  <meta property="og:image" content="https://gemstalent.com.sg/assets/og-card.png" />
+  <meta property="og:locale" content="en_SG" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="About — GEMS Talent" />
+  <meta name="twitter:description" content="Twelve years representing artistes and shaping Singapore's stage. A small senior studio working across Singapore, Kuala Lumpur, and Jakarta." />
+  <meta name="twitter:image" content="https://gemstalent.com.sg/assets/og-card.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <link rel="stylesheet" href="styles/styles.css" />
+  <link rel="stylesheet" href="styles/responsive.css" />
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    body[data-brass="default"]{--brass:#C9A961;--brass-soft:#b89548}
+
+    /* ───────── Studio statement ───────── */
+    .studio{
+      padding: 120px 0;
+      border-bottom: 1px solid var(--hair);
+    }
+    .studio .grid{
+      display: grid;
+      grid-template-columns: 200px 1fr 1.05fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .studio .pull{
+      font-family: var(--serif); font-style: italic; font-weight: 400;
+      font-size: clamp(34px, 3.4vw, 56px);
+      line-height: 1.12; letter-spacing: -0.018em;
+      color: var(--ink); max-width: 14ch;
+    }
+    .studio .pull::before{
+      content: "“";
+      display: block;
+      font-size: 64px;
+      line-height: 0.5;
+      color: var(--brass);
+      margin-bottom: 24px;
+    }
+    .studio .body p{
+      font-size: 17px; line-height: 1.6; color: var(--slate);
+      max-width: 46ch;
+    }
+    .studio .body p + p{ margin-top: 18px; }
+    .studio .body .signoff{
+      margin-top: 36px; padding-top: 22px;
+      border-top: 1px solid var(--hair);
+      display: flex; gap: 36px; flex-wrap: wrap;
+      font-family: var(--mono); font-size: 11px;
+      letter-spacing: 0.10em; text-transform: uppercase;
+      color: var(--slate);
+    }
+    .studio .body .signoff .k{ color: var(--brass); margin-right: 8px; }
+
+    /* ───────── Principles (4 cards) ───────── */
+    .principles{
+      background: var(--sage); color: var(--ink);
+      padding: 140px 0;
+    }
+    .principles .head{
+      display: grid; grid-template-columns: 200px 1fr;
+      gap: 64px; margin-bottom: 72px;
+    }
+    .principles .grid{
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 0;
+    }
+    .principles .card{
+      padding: 48px 56px 48px 0;
+      border-top: 1px solid var(--hair-strong);
+    }
+    .principles .card:nth-child(odd){ padding-right: 56px; }
+    .principles .card:nth-child(even){
+      padding-left: 56px;
+      border-left: 1px solid var(--hair);
+    }
+    .principles .card:nth-child(n+3){ border-top-color: var(--hair); }
+    .principles .card .num{
+      font-family: var(--mono); font-size: 12px;
+      letter-spacing: 0.10em; color: var(--cobalt);
+    }
+    .principles .card .t{
+      margin-top: 22px;
+      font-size: clamp(26px, 2.4vw, 34px);
+      line-height: 1.15; letter-spacing: -0.018em; font-weight: 500;
+      max-width: 18ch;
+    }
+    .principles .card .b{
+      margin-top: 18px;
+      font-size: 15px; line-height: 1.6; color: var(--slate);
+      max-width: 40ch;
+    }
+
+    /* ───────── Timeline (cobalt-deep) ───────── */
+    .timeline{
+      background: var(--cobalt-deep); color: var(--bone);
+      padding: 140px 0;
+    }
+    .timeline .head{
+      display: grid; grid-template-columns: 200px 1fr;
+      gap: 64px; margin-bottom: 64px;
+    }
+    .timeline .head .rail{
+      font-family: var(--mono); font-size: 11px;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(250,247,242,0.55);
+    }
+    .timeline .head .rail .num{ color: var(--teal); margin-right: 12px; }
+    .timeline .head .t{
+      font-size: clamp(40px, 4.6vw, 76px); line-height: 1.0;
+      letter-spacing: -0.022em; font-weight: 500; max-width: 18ch;
+    }
+    .timeline .head .sub{
+      margin-top: 22px; font-size: 16px;
+      color: rgba(250,247,242,0.7); line-height: 1.55;
+      max-width: 50ch;
+    }
+    .timeline .row{
+      display: grid;
+      grid-template-columns: 140px 1.2fr 2fr 60px;
+      gap: 32px; align-items: baseline;
+      padding: 28px 0;
+      border-top: 1px solid rgba(250,247,242,0.18);
+    }
+    .timeline .row:first-of-type{ border-top-color: rgba(250,247,242,0.32); }
+    .timeline .row:last-of-type{ border-bottom: 1px solid rgba(250,247,242,0.18); }
+    .timeline .row .year{
+      font-family: var(--sans); font-weight: 500;
+      font-size: 30px; letter-spacing: -0.02em; color: var(--teal-soft);
+    }
+    .timeline .row .label{
+      font-size: 20px; font-weight: 500; letter-spacing: -0.01em;
+      color: var(--bone);
+    }
+    .timeline .row .note{
+      font-size: 14px; line-height: 1.5;
+      color: rgba(250,247,242,0.7);
+    }
+    .timeline .row .dot{
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--brass); justify-self: end;
+    }
+
+    /* ───────── Locations strip ───────── */
+    .locations{
+      padding: 120px 0;
+      border-top: 1px solid var(--hair);
+    }
+    .locations .head{
+      display: grid; grid-template-columns: 200px 1fr;
+      gap: 64px; margin-bottom: 56px;
+    }
+    .locations .grid{
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    .locations .city{
+      padding: 36px 28px 36px 0;
+      border-top: 1px solid var(--hair-strong);
+    }
+    .locations .city + .city{
+      padding-left: 36px;
+      border-left: 1px solid var(--hair);
+    }
+    .locations .city .num{
+      font-family: var(--mono); font-size: 11px;
+      letter-spacing: 0.10em; color: var(--brass);
+    }
+    .locations .city .t{
+      margin-top: 16px;
+      font-size: 36px; font-weight: 500; letter-spacing: -0.02em;
+      line-height: 1.0;
+    }
+    .locations .city .role{
+      margin-top: 18px;
+      font-family: var(--mono); font-size: 11px;
+      letter-spacing: 0.10em; text-transform: uppercase;
+      color: var(--cobalt);
+    }
+    .locations .city .note{
+      margin-top: 14px;
+      font-size: 14px; line-height: 1.5; color: var(--slate);
+      max-width: 28ch;
+    }
+  </style>
+</head>
+<body data-brass="default">
+  <script src="data.js"></script>
+  <div id="root"></div>
+  <script type="text/babel" src="components/nav.jsx"></script>
+  <script type="text/babel" src="components/sections.jsx"></script>
+  <script type="text/babel" src="components/page-header.jsx"></script>
+  <script type="text/babel" data-presets="env,react">
+    const { useState, useEffect } = React;
+    const D = window.GEMS_DATA;
+
+    function StudioStatement() {
+      return (
+        <section className="studio" data-screen-label="Studio">
+          <div className="container">
+            <div className="grid">
+              <div className="sec-rail" style={{ position: "static" }}>
+                <span className="num">·</span>The studio
+              </div>
+              <div className="pull">
+                A small studio for Singapore talent — and the rooms they belong in.
+              </div>
+              <div className="body">
+                <p>
+                  Founded in 2014 with a passion for Singapore's vibrant arts
+                  scene, GEMS is an entertainment marketing and event logistics
+                  agency dedicated to showcasing local talent and delivering
+                  world-class experiences across the region.
+                </p>
+                <p>
+                  With a senior network of artistes, creatives, and partners
+                  across Asia, we offer full-spectrum event services — from
+                  artiste hospitality and talent management to logistics and
+                  show production.
+                </p>
+                <p>
+                  Recent productions include the <span className="serif-em">RWS
+                  Exclusive Showcase</span> featuring Shila Amzah, Chriz Tong's
+                  appearance with Grasshopper's <span className="serif-em">Be
+                  Three Live</span> in Genting, and the
+                  <span className="serif-em"> Theresa Carpio Concert</span>.
+                </p>
+                <div className="signoff">
+                  <span><span className="k">Founded</span>2014</span>
+                  <span><span className="k">HQ</span>Singapore</span>
+                  <span><span className="k">Reach</span>SG · KL · JKT</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function Principles({ items }) {
+      return (
+        <section className="principles" data-screen-label="Principles">
+          <div className="container">
+            <div className="head">
+              <div className="sec-rail" style={{ position: "static" }}>
+                <span className="num">·</span>How we work
+              </div>
+              <div>
+                <h2 className="h1" style={{ maxWidth: "16ch" }}>
+                  Four principles we don't trade off.
+                </h2>
+                <p style={{ marginTop: 24, fontSize: 16, color: "var(--slate)", maxWidth: "48ch", lineHeight: 1.55 }}>
+                  Twelve years of running rooms has narrowed us down to a short
+                  list of things we won't compromise on. Read these as the floor,
+                  not the ceiling.
+                </p>
+              </div>
+            </div>
+            <div className="grid">
+              {items.map((p) => (
+                <div key={p.n} className="card">
+                  <div className="num">{p.n}</div>
+                  <div className="t">{p.title}</div>
+                  <div className="b">{p.body}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function Timeline({ items }) {
+      return (
+        <section className="timeline" data-screen-label="Timeline">
+          <div className="container">
+            <div className="head">
+              <div className="rail"><span className="num">·</span>Milestones</div>
+              <div>
+                <h2 className="t">
+                  Twelve years, told briefly.
+                </h2>
+                <p className="sub">
+                  A short list of moments — the dates the studio remembers, and
+                  the rooms they were held in.
+                </p>
+              </div>
+            </div>
+            <div>
+              {items.map((m, i) => (
+                <div key={i} className="row">
+                  <span className="year">{m.year}</span>
+                  <span className="label">{m.label}</span>
+                  <span className="note">{m.note}</span>
+                  <span className="dot" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function Locations({ items }) {
+      return (
+        <section className="locations" data-screen-label="Locations">
+          <div className="container">
+            <div className="head">
+              <div className="sec-rail" style={{ position: "static" }}>
+                <span className="num">·</span>Where we work
+              </div>
+              <div>
+                <h2 className="h2" style={{ maxWidth: "18ch" }}>
+                  Three rooms, one phone list.
+                </h2>
+                <p style={{ marginTop: 18, fontSize: 15, color: "var(--slate)", maxWidth: "44ch", lineHeight: 1.55 }}>
+                  A senior team in Singapore, a regional desk in KL, and
+                  production partners on the ground in Jakarta.
+                </p>
+              </div>
+            </div>
+            <div className="grid">
+              {items.map((c, i) => (
+                <div key={c.city} className="city">
+                  <div className="num">{String(i + 1).padStart(2, "0")}</div>
+                  <div className="t">{c.city}</div>
+                  <div className="role">{c.role}</div>
+                  <div className="note">{c.note}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function App() {
+      useEffect(() => { document.body.setAttribute("data-brass", "default"); }, []);
+      return (
+        <>
+          <Nav condensed={true} />
+          <main>
+            <PageHeader
+              eyebrow={{ num: "05", label: "About GEMS" }}
+              title={<><span>Founded in 2014.</span> <span>Bringing events to life.</span></>}
+              sub="An entertainment marketing and event logistics studio. Singapore-based, regionally scoped, end-to-end on every brief."
+              image={D.backgrounds.aboutImg}
+            />
+            <StudioStatement />
+            <Principles items={D.principles} />
+            <Timeline items={D.timeline} />
+            <StatsStrip />
+            <Locations items={D.locations} />
+            <FooterCTA variant="work" useSerif={false} />
+          </main>
+          <Footer />
+        </>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

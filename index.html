@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GEMS Talent — Singapore's stage. Our talent. Asia's audience.</title>
+
+  <meta name="description" content="Talent representation, entertainment marketing, and live production from Singapore for stages across Asia. Twelve years representing the artistes shaping Singapore's stage." />
+  <link rel="canonical" href="https://gemstalent.com.sg/" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="assets/gems-stamp-nav.jpg" />
+  <link rel="apple-touch-icon" href="assets/gems-stamp-nav.jpg" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="GEMS Talent" />
+  <meta property="og:title" content="GEMS Talent — Singapore's stage. Our talent. Asia's audience." />
+  <meta property="og:description" content="Talent representation, entertainment marketing, and live production from Singapore for stages across Asia. Twelve years representing the artistes shaping Singapore's stage." />
+  <meta property="og:url" content="https://gemstalent.com.sg/" />
+  <meta property="og:image" content="https://gemstalent.com.sg/assets/og-card.png" />
+  <meta property="og:locale" content="en_SG" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="GEMS Talent — Singapore's stage. Our talent. Asia's audience." />
+  <meta name="twitter:description" content="Talent representation, entertainment marketing, and live production from Singapore for stages across Asia. Twelve years representing the artistes shaping Singapore's stage." />
+  <meta name="twitter:image" content="https://gemstalent.com.sg/assets/og-card.png" />
+
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" />
+
+  <link rel="stylesheet" href="styles/styles.css" />
+  <link rel="stylesheet" href="styles/responsive.css" />
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <style>
+    /* Brand intensity — cobalt-led, brass + teal for accent */
+    body[data-brass="subtle"]    { --cobalt:#1A4FA8; --teal:#3FB0CC; --brass:#B89A5C; --brass-soft:#a6884d; }
+    body[data-brass="default"]   { --cobalt:#0D3FA0; --teal:#1FA2C2; --brass:#C9A961; --brass-soft:#b89548; }
+    body[data-brass="assertive"] { --cobalt:#0036B5; --teal:#00B4D8; --brass:#E5BD60; --brass-soft:#d6ab48; }
+  </style>
+</head>
+<body data-brass="default" style="background-color: #E6ECF2; font-family: &quot;Inter Tight&quot;">
+
+  <script src="data.js"></script>
+
+  <div id="root"></div>
+
+  <script type="text/babel" src="components/tweaks-panel.jsx"></script>
+  <script type="text/babel" src="components/nav.jsx"></script>
+  <script type="text/babel" src="components/hero.jsx"></script>
+  <script type="text/babel" src="components/sections.jsx"></script>
+
+  <script type="text/babel" data-presets="env,react">
+    const { useState, useEffect } = React;
+
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "headline": "placeholder",
+      "heroLayout": "split",
+      "typePairing": "sans-only",
+      "brassIntensity": "default",
+      "rosterTreatment": "overlay",
+      "servicesMode": "blurb-slide",
+      "footerCTA": "work",
+      "parallax": false
+    }/*EDITMODE-END*/;
+
+    function useScrollCondense(threshold = 80) {
+      const [c, setC] = useState(false);
+      useEffect(() => {
+        const onScroll = () => setC(window.scrollY > threshold);
+        onScroll();
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+      }, [threshold]);
+      return c;
+    }
+
+    function useReveal() {
+      useEffect(() => {
+        const els = document.querySelectorAll(".reveal");
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(e => {
+            if (e.isIntersecting) {
+              e.target.classList.add("in");
+              io.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: "0px 0px -10% 0px" });
+        els.forEach(el => io.observe(el));
+        return () => io.disconnect();
+      }, []);
+    }
+
+    function App() {
+      const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+      const condensed = useScrollCondense(80);
+      useReveal();
+
+      // Make serif accent flag global so non-React tweaks read it (data only)
+      window.__SERIF_ACCENTS__ = (t.typePairing === "sans-serif");
+
+      // Apply brass intensity at the body level
+      useEffect(() => {
+        document.body.setAttribute("data-brass", t.brassIntensity);
+      }, [t.brassIntensity]);
+
+      const useSerif = t.typePairing === "sans-serif";
+
+      return (
+        <>
+          <Nav condensed={condensed} />
+          <main>
+            <Hero
+              headline={t.headline}
+              layout={t.heroLayout}
+              parallax={t.parallax}
+            />
+            <StatsStrip />
+            <ClientMarquee />
+            <WorkPreview useSerif={useSerif} />
+            <Roster treatment={t.rosterTreatment} useSerif={useSerif} />
+            <Services mode={t.servicesMode} useSerif={useSerif} />
+            <FooterCTA variant={t.footerCTA} useSerif={useSerif} />
+          </main>
+          <Footer />
+
+          <TweaksPanel title="Tweaks">
+            <TweakSection label="Hero" />
+            <TweakSelect
+              label="Headline"
+              value={t.headline}
+              options={[
+                { value: "placeholder", label: "Singapore's stage. (placeholder)" },
+                { value: "quieter",     label: "Representing the artistes…" },
+                { value: "tighter",     label: "Talent, staged." },
+              ]}
+              onChange={(v) => setTweak("headline", v)}
+            />
+            <TweakRadio
+              label="Hero layout"
+              value={t.heroLayout}
+              options={[
+                { value: "split",      label: "Split" },
+                { value: "asymmetric", label: "60 / 40" },
+                { value: "fullbleed",  label: "Full-bleed" },
+              ]}
+              onChange={(v) => setTweak("heroLayout", v)}
+            />
+            <TweakToggle
+              label="Hero parallax"
+              value={t.parallax}
+              onChange={(v) => setTweak("parallax", v)}
+            />
+
+            <TweakSection label="Type & color" />
+            <TweakRadio
+              label="Type pairing"
+              value={t.typePairing}
+              options={[
+                { value: "sans-only",   label: "Sans only" },
+                { value: "sans-serif",  label: "Sans + serif" },
+              ]}
+              onChange={(v) => setTweak("typePairing", v)}
+            />
+            <TweakRadio
+              label="Brass intensity"
+              value={t.brassIntensity}
+              options={[
+                { value: "subtle",    label: "Subtle" },
+                { value: "default",   label: "Default" },
+                { value: "assertive", label: "Bold" },
+              ]}
+              onChange={(v) => setTweak("brassIntensity", v)}
+            />
+
+            <TweakSection label="Roster & services" />
+            <TweakSelect
+              label="Roster card"
+              value={t.rosterTreatment}
+              options={[
+                { value: "below-stacked", label: "Caption below — stacked" },
+                { value: "below-split",   label: "Caption below — split" },
+                { value: "overlay",       label: "Overlay on hover" },
+              ]}
+              onChange={(v) => setTweak("rosterTreatment", v)}
+            />
+            <TweakSelect
+              label="Services interaction"
+              value={t.servicesMode}
+              options={[
+                { value: "static",       label: "Static blurb in row" },
+                { value: "blurb-slide",  label: "Hover: blurb slides in" },
+                { value: "image-strip",  label: "Hover: image strip appears" },
+              ]}
+              onChange={(v) => setTweak("servicesMode", v)}
+            />
+
+            <TweakSection label="Footer CTA" />
+            <TweakSelect
+              label="CTA variant"
+              value={t.footerCTA}
+              options={[
+                { value: "work",   label: "\"Cast your next show.\"" },
+                { value: "join",   label: "\"We're listening.\" (roster)" },
+                { value: "direct", label: "Direct: talent@gems.sg" },
+              ]}
+              onChange={(v) => setTweak("footerCTA", v)}
+            />
+          </TweaksPanel>
+        </>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+
+</body>
+</html>

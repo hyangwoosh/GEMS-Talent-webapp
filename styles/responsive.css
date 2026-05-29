@@ -1,0 +1,405 @@
+/* ─────────────────────────────────────────────────────────────
+   GEMS Talent — responsive overrides
+   Layered on top of styles.css. Defeats inline `style=` props
+   from the React components with attribute + class selectors
+   plus `!important` where unavoidable.
+
+   Breakpoints
+     ≤1100  small desktop / large tablet — rail-grid collapses
+     ≤900   tablet / large phone        — hero stacks, hamburger
+     ≤600   phone                       — single column, tighter padding
+   ───────────────────────────────────────────────────────────── */
+
+/* ═══ Mobile-nav primitives (default-hidden, shown via @media) ═══ */
+.nav-burger { display: none !important; }
+
+.nav-drawer {
+  position: fixed; inset: 0;
+  background: rgba(14, 26, 43, 0.55);
+  z-index: 200;
+  opacity: 0; pointer-events: none;
+  transition: opacity 240ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-drawer.is-open { opacity: 1; pointer-events: auto; }
+
+.nav-drawer__panel {
+  position: absolute; top: 0; right: 0; bottom: 0;
+  width: min(420px, 86vw);
+  background: var(--bone);
+  display: flex; flex-direction: column;
+  padding: 22px 28px 28px;
+  transform: translateX(100%);
+  transition: transform 320ms cubic-bezier(.2,.7,.2,1);
+  box-shadow: -16px 0 64px rgba(14, 26, 43, 0.22);
+}
+.nav-drawer.is-open .nav-drawer__panel { transform: translateX(0); }
+
+.nav-drawer__rail {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--hair);
+}
+.nav-drawer__list {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column;
+  margin-top: 4px;
+}
+.nav-drawer__list li { border-bottom: 1px solid var(--hair); }
+.nav-drawer__list a {
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 0;
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.nav-drawer__list a .num {
+  color: var(--brass);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+.nav-drawer__foot {
+  margin-top: auto;
+  padding-top: 28px;
+  display: flex; flex-direction: column; align-items: flex-start;
+}
+
+/* ════════════ ≤1100px — tablet ════════════ */
+@media (max-width: 1100px) {
+  :root { --gutter: 36px; }
+
+  .rail-grid {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+  }
+  .sec-rail {
+    position: static !important;
+    top: auto !important;
+    margin-bottom: 4px;
+  }
+
+  .roster-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  .work-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+/* ════════════ ≤900px — tablet / large phone ════════════ */
+@media (max-width: 900px) {
+  :root { --gutter: 24px; }
+
+  body { font-size: 15px; }
+
+  .section { padding: 72px 0 !important; }
+  .display { font-size: clamp(44px, 9vw, 88px) !important; }
+  .h1 { font-size: clamp(34px, 6.4vw, 56px) !important; }
+  .lede { font-size: 18px !important; }
+
+  /* ── Nav: collapse to logo + hamburger ── */
+  .site-nav .nav-grid {
+    grid-template-columns: auto 1fr !important;
+    gap: 16px !important;
+  }
+  .site-nav .nav-links { display: none !important; }
+  .site-nav .nav-meta  { display: none !important; }
+  .site-nav .nav-cta   { display: none !important; }
+  .site-nav .nav-right { justify-content: flex-end !important; }
+  .nav-burger { display: inline-flex !important; align-items: center; justify-content: center; }
+
+  /* ── Hero ── */
+  [data-screen-label="Hero"] { min-height: auto !important; }
+  .hero-split {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+    padding-top: 112px !important;
+    padding-bottom: 36px !important;
+    align-items: stretch !important;
+  }
+  .hero-asym {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+    padding-top: 128px !important;
+    padding-bottom: 36px !important;
+    min-height: auto !important;
+  }
+  .hero-rail {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    padding-block: 24px !important;
+  }
+
+  /* ── Stats: 4 → 2 ── */
+  [data-screen-label="Stats"] .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  [data-screen-label="Stats"] .stats-grid > div {
+    padding-block: 36px !important;
+    padding-inline: 24px !important;
+    border-left: 1px solid var(--hair) !important;
+  }
+  [data-screen-label="Stats"] .stats-grid > div:nth-child(2n + 1) {
+    padding-inline-start: 0 !important;
+    border-left: none !important;
+  }
+  [data-screen-label="Stats"] .stats-grid > div:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--hair);
+  }
+
+  /* ── Roster: 4 → 2 ── */
+  .roster-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 28px 16px !important;
+  }
+
+  /* ── Work preview: 3 → 1 ── */
+  .work-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+
+  /* ── Services row: collapse to 2-row stack ── */
+  .service-row {
+    grid-template-columns: auto 1fr !important;
+    grid-template-rows: auto auto !important;
+    column-gap: 16px !important;
+    row-gap: 10px !important;
+    padding: 28px 0 !important;
+  }
+  /* col 1 = number, col 2 = title, blurb spans both, arrow hidden */
+  .service-row > :nth-child(3) {
+    grid-column: 1 / -1 !important;
+    width: auto !important;
+    height: auto !important;
+    max-width: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    background: transparent !important;
+    color: var(--slate) !important;
+    font-size: 14px !important;
+  }
+  .service-row > :nth-child(3) .strip-meta { display: none; }
+  .service-row > :nth-child(4) { display: none !important; }
+  .service-row > :nth-child(2) {
+    font-size: clamp(28px, 6vw, 44px) !important;
+    transform: none !important;
+  }
+
+  /* ── Footer CTA ── */
+  [data-screen-label="Footer CTA"] { padding-block: 96px !important; }
+  [data-screen-label="Footer CTA"] .display {
+    font-size: clamp(44px, 12vw, 96px) !important;
+  }
+
+  /* ── Footer cols: 3 → 2, headline col spans full ── */
+  .footer-cols {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 40px 32px !important;
+  }
+  .footer-cols > div:first-child { grid-column: 1 / -1; }
+
+  /* ── Contact form 2-col → 1-col ── */
+  .contact-grid {
+    grid-template-columns: 1fr !important;
+    gap: 56px !important;
+  }
+  .contact-grid > div:last-child {
+    padding: 36px 28px !important;
+  }
+
+  /* ── Page header ── */
+  [data-screen-label="Page header"] {
+    padding-top: 132px !important;
+    padding-bottom: 64px !important;
+  }
+  [data-screen-label="Page header"] .display {
+    font-size: clamp(44px, 10vw, 80px) !important;
+  }
+
+  /* ── Marquee ── */
+  .marquee { padding: 22px 0; }
+  .marquee-item { font-size: 20px; gap: 36px; }
+
+  /* ── Tweaks panel — keep within bounds ── */
+  /* svh = small viewport height (smallest stable size, with chrome shown).
+     Guarantees the panel never exceeds the visible viewport on mobile
+     browsers where the address bar toggles. vh fallback for legacy. */
+  .tweaks-panel,
+  [data-tweaks-panel] {
+    width: min(360px, calc(100vw - 32px)) !important;
+    max-height: calc(100vh - 32px) !important;
+    max-height: calc(100svh - 32px) !important;
+  }
+}
+
+/* ════════════ ≤600px — phone ════════════ */
+@media (max-width: 600px) {
+  :root { --gutter: 20px; }
+
+  .section { padding: 56px 0 !important; }
+  .display { font-size: clamp(40px, 11vw, 64px) !important; line-height: 0.96 !important; }
+  .h1 { font-size: clamp(30px, 8vw, 44px) !important; }
+  .h2 { font-size: clamp(24px, 6vw, 32px) !important; }
+  .lede { font-size: 17px !important; }
+
+  /* ── Stats: 2 → 1 ── */
+  [data-screen-label="Stats"] .stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+  [data-screen-label="Stats"] .stats-grid > div {
+    padding-block: 28px !important;
+    padding-inline: 0 !important;
+    border-left: none !important;
+    border-bottom: none !important;
+    border-top: 1px solid var(--hair) !important;
+  }
+  [data-screen-label="Stats"] .stats-grid > div:first-child {
+    border-top: none !important;
+  }
+
+  /* ── Roster: 2 → 1 ── */
+  .roster-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+  .roster-img { aspect-ratio: 4 / 5 !important; }
+
+  /* ── Footer cols: → 1 ── */
+  .footer-cols {
+    grid-template-columns: 1fr !important;
+    gap: 36px !important;
+  }
+  .footer-cols > div:first-child { grid-column: auto; }
+  footer [style*="justify-content: space-between"] {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+
+  /* ── Footer CTA buttons full-width stack ── */
+  [data-screen-label="Footer CTA"] [style*="justify-content: center"] {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+  [data-screen-label="Footer CTA"] .btn {
+    justify-content: center !important;
+    width: 100% !important;
+  }
+
+  /* ── Page header ── */
+  [data-screen-label="Page header"] {
+    padding-top: 108px !important;
+    padding-bottom: 48px !important;
+  }
+  [data-screen-label="Page header"] .display {
+    font-size: clamp(36px, 11vw, 60px) !important;
+  }
+
+  /* ── Drawer panel: nearly full-width ── */
+  .nav-drawer__panel {
+    width: min(420px, 100vw) !important;
+    padding: 20px 22px 24px;
+  }
+  .nav-drawer__list a { font-size: 22px; padding: 18px 0; }
+}
+
+/* ════════════ Touch tap targets ════════════ */
+@media (hover: none) and (pointer: coarse) {
+  .nav-link { padding-block: 14px !important; }
+  .btn { min-height: 44px; }
+  /* Disable hover-only reveals on services rows when there's no hover */
+  .service-row > :nth-child(3) {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ════════════ Prevent horizontal scroll ════════════ */
+html, body { max-width: 100%; }
+
+/* ─────────────────────────────────────────────────────────────
+   Inner-page grid overrides
+   Each inner page (about / clients / work / services / artistes)
+   ships its own <style> block with grid layouts. Override here
+   so the responsive treatment lives in one place.
+   ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 1100px) {
+  /* about.html */
+  .studio .grid          { grid-template-columns: 1fr 1fr !important; gap: 40px !important; }
+  .principles .grid      { grid-template-columns: 1fr !important; }
+  .locations .grid       { grid-template-columns: 1fr !important; }
+  /* clients.html */
+  .c-summary             { grid-template-columns: 1fr !important; gap: 40px !important; padding: 80px 0 48px !important; }
+  .c-group               { grid-template-columns: 1fr !important; gap: 32px !important; padding: 56px 0 !important; }
+  .c-testimonials .quotes{ grid-template-columns: 1fr !important; gap: 40px !important; }
+  /* work.html */
+  .case-meta             { grid-template-columns: repeat(2, 1fr) !important; row-gap: 24px !important; }
+  /* services.html */
+  .svc-grid              { grid-template-columns: 1fr !important; gap: 40px !important; }
+  /* artistes.html */
+  .a-grid                { grid-template-columns: 1fr !important; gap: 48px !important; }
+}
+
+@media (max-width: 900px) {
+  /* about.html — sticky rails off, single-col stacks */
+  .studio .grid          { grid-template-columns: 1fr !important; gap: 32px !important; }
+  .studio .grid .rail,
+  .principles .head,
+  .timeline .head,
+  .locations .head       { grid-template-columns: 1fr !important; gap: 16px !important; margin-bottom: 32px !important; }
+  .timeline .row         {
+    grid-template-columns: 80px 1fr !important;
+    grid-template-rows: auto auto !important;
+    row-gap: 8px !important; column-gap: 16px !important;
+    padding: 20px 0 !important;
+  }
+  .timeline .row > :nth-child(3) { grid-column: 1 / -1 !important; }
+  .timeline .row > :nth-child(4) { display: none !important; }
+
+  /* clients.html */
+  .c-summary .stat-grid  { grid-template-columns: 1fr !important; gap: 24px !important; }
+  .c-list                { grid-template-columns: 1fr !important; }
+  .c-testimonials        { padding: 80px 0 !important; }
+  .c-testimonials .grid  { grid-template-columns: 1fr !important; gap: 32px !important; }
+
+  /* work.html */
+  .gal-2, .gal-3, .gal-asym {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto !important;
+  }
+  .gallery-grid img      { aspect-ratio: 4 / 3 !important; }
+
+  /* services.html */
+  .s-index               { grid-template-columns: repeat(2, 1fr) !important; gap: 20px 16px !important; }
+  .deliv .row            { padding: 14px 0 !important; }
+
+  /* artistes.html */
+  .a-meta                { grid-template-columns: 1fr !important; row-gap: 18px !important; }
+  .a-notable .row {
+    grid-template-columns: 60px 1fr !important;
+    grid-template-rows: auto auto !important;
+    row-gap: 6px !important; column-gap: 16px !important;
+    padding: 14px 0 !important;
+  }
+  .a-notable .row > :nth-child(3) { grid-column: 1 / -1 !important; }
+  .a-gallery .g-2, .a-gallery .g-3 { grid-template-columns: 1fr !important; }
+  .a-index               { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
+}
+
+@media (max-width: 600px) {
+  /* work.html */
+  .case-meta             { grid-template-columns: 1fr !important; row-gap: 18px !important; padding: 28px 0 !important; }
+  /* services.html */
+  .s-index               { grid-template-columns: 1fr !important; }
+  /* artistes.html */
+  .a-index               { grid-template-columns: 1fr !important; }
+}

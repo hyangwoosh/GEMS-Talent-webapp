@@ -1,0 +1,147 @@
+
+<style>
+  .wrap { font-family: var(--font-sans); max-width: 660px; padding: 1rem 0; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .badge-done { background: #E1F5EE; color: #0F6E56; }
+  .badge-wip { background: #FAEEDA; color: #854F0B; }
+  .badge-open { background: #FAECE7; color: #993C1D; }
+  .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-secondary); margin: 2rem 0 0.75rem; border-top: 0.5px solid var(--color-border-tertiary); padding-top: 1.25rem; }
+  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 10px; }
+  .card-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin: 0 0 6px; }
+  .card-body { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; margin: 0; }
+  code { font-family: var(--font-mono); font-size: 12px; background: var(--color-background-secondary); padding: 1px 5px; border-radius: 3px; color: var(--color-text-primary); }
+  .file-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; }
+  .file-item { font-size: 12px; padding: 6px 10px; background: var(--color-background-secondary); border-radius: 6px; color: var(--color-text-secondary); }
+  .file-item code { background: none; padding: 0; font-size: 12px; color: var(--color-text-primary); }
+  .swatch-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .swatch { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--color-text-secondary); }
+  .swatch-dot { width: 16px; height: 16px; border-radius: 50%; border: 0.5px solid var(--color-border-tertiary); flex-shrink: 0; }
+  .todo-list { list-style: none; margin: 0; padding: 0; }
+  .todo-list li { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--color-text-secondary); padding: 5px 0; border-bottom: 0.5px solid var(--color-border-tertiary); line-height: 1.5; }
+  .todo-list li:last-child { border-bottom: none; }
+  .todo-num { font-size: 11px; font-weight: 500; min-width: 20px; color: var(--color-text-tertiary); padding-top: 1px; }
+  .pref-tag { display: inline-block; font-size: 12px; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: 4px; padding: 2px 8px; margin: 3px 3px 3px 0; color: var(--color-text-secondary); }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 500px) { .two-col { grid-template-columns: 1fr; } .file-grid { grid-template-columns: 1fr 1fr; } }
+</style>
+
+<div class="wrap">
+  <h2 style="font-size:18px;font-weight:500;margin:0 0 4px;">GEMS Talent — Full Project Handoff</h2>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin:0 0 0.5rem;">Singapore talent agency · Desktop-first editorial prototype · React 18 + Babel CDN · Inline JSX</p>
+
+  <p class="section-label">Overview</p>
+  <div class="card">
+    <p class="card-body">GEMS Talent is a Singapore entertainment marketing &amp; event logistics agency (founded 2014). The prototype is a multi-page React-in-HTML site built with React 18 + Babel via CDN, inline JSX modules, and vanilla CSS. Design direction: editorial restraint inspired by WME. A Tweaks panel provides live design controls with JSON persistence.</p>
+  </div>
+
+  <p class="section-label">File map</p>
+  <div class="file-grid">
+    <div class="file-item"><code>index.html</code><br>Homepage + Tweaks shell</div>
+    <div class="file-item"><code>hero.jsx</code><br>3 layouts, slideshow, parallax</div>
+    <div class="file-item"><code>sections.jsx</code><br>StatsStrip, Marquee, Roster, Services, WorkPreview, FooterCTA, Footer</div>
+    <div class="file-item"><code>nav.jsx</code><br>Fixed nav, condensed-on-scroll, mist bg</div>
+    <div class="file-item"><code>page-header.jsx</code><br>Inner-page hero header</div>
+    <div class="file-item"><code>data.js</code><br>All copy, artistes, projects, services, clients, stats</div>
+    <div class="file-item"><code>tweaks-panel.jsx</code><br>Drag panel, controls, JSON persistence</div>
+    <div class="file-item"><code>styles.css</code><br>Global tokens + utilities</div>
+    <div class="file-item"><code>artistes.html</code><br>Roster index page</div>
+    <div class="file-item"><code>work.html</code><br>3 case studies + galleries</div>
+    <div class="file-item"><code>services / clients / about / contact.html</code><br>Inner pages (About + Contact nearly done)</div>
+    <div class="file-item"><code>api/enquiry.js</code><br>Vercel serverless (Resend API)</div>
+    <div class="file-item"><code>email-templates/</code><br>team-notification.js + auto-reply.js</div>
+    <div class="file-item"><code>email-preview.html</code><br>Side-by-side email preview + Tweaks</div>
+    <div class="file-item"><code>palette-options.html</code><br>Palette explorer (A–E, Option B chosen)</div>
+    <div class="file-item"><code>logo-options.html</code><br>Logo variant comparison</div>
+    <div class="file-item"><code>assets/gems-stamp-nav.jpg</code><br>Circular company stamp logo</div>
+  </div>
+
+  <p class="section-label">Active palette — Option B: Cool Mist + Cobalt-Led <span class="badge badge-done">locked</span></p>
+  <div class="card">
+    <div class="swatch-row">
+      <div class="swatch"><div class="swatch-dot" style="background:#E6ECF2;"></div>Mist <code>#E6ECF2</code> — base bg</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#0D3FA0;"></div>Cobalt <code>#0D3FA0</code></div>
+      <div class="swatch"><div class="swatch-dot" style="background:#062870;"></div>Cobalt-deep <code>#062870</code></div>
+      <div class="swatch"><div class="swatch-dot" style="background:#2A5DC4;"></div>Cobalt-soft <code>#2A5DC4</code></div>
+      <div class="swatch"><div class="swatch-dot" style="background:#1FA2C2;"></div>Teal <code>#1FA2C2</code></div>
+      <div class="swatch"><div class="swatch-dot" style="background:#5CC1D9;"></div>Teal-soft <code>#5CC1D9</code></div>
+      <div class="swatch"><div class="swatch-dot" style="background:#C9A961;"></div>Brass <code>#C9A961</code> — accent only</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#D8E1ED;"></div>Clay <code>#D8E1ED</code> — section tint</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#C8D4E0;"></div>Sage <code>#C8D4E0</code> — section tint</div>
+      <div class="swatch"><div class="swatch-dot" style="background:#0E1A2B;"></div>Ink <code>#0E1A2B</code></div>
+    </div>
+    <p class="card-body" style="margin-top:10px;">Brass is accent-only: eyebrow dots, separators, selection highlights. Never a fill. Brass intensity Tweaks scale should continue to affect all three accent tiers.</p>
+  </div>
+
+  <p class="section-label">Section color assignments (index.html)</p>
+  <div class="file-grid">
+    <div class="file-item">Hero / Stats / Marquee / Roster → <strong style="color:var(--color-text-primary)">Mist</strong></div>
+    <div class="file-item">WorkPreview → <strong style="color:var(--color-text-primary)">Cobalt-deep</strong>, light text, teal section #, ghost-bone button</div>
+    <div class="file-item">Services → <strong style="color:var(--color-text-primary)">Sage</strong></div>
+    <div class="file-item">FooterCTA → <strong style="color:var(--color-text-primary)">Clay</strong></div>
+    <div class="file-item">Footer → <strong style="color:var(--color-text-primary)">Cobalt-deep</strong></div>
+  </div>
+
+  <p class="section-label">Design system — locked</p>
+  <div class="two-col">
+    <div class="card">
+      <p class="card-title">Typography</p>
+      <p class="card-body">Inter Tight (sans) + Newsreader italic (serif accents). Eyebrow rail: sticky left rail, numbered section markers, brass dot. Sentence case, 11px tracked eyebrows.</p>
+    </div>
+    <div class="card">
+      <p class="card-title">Tweaks axes</p>
+      <p class="card-body">Headline variant (3), hero layout (split / asymmetric / fullbleed), type pairing, brass intensity, roster treatment (3), services interaction (3), footer CTA (3), parallax.</p>
+    </div>
+  </div>
+
+  <p class="section-label">Content (from WordPress CDN)</p>
+  <div class="card">
+    <p class="card-body">
+      <strong style="color:var(--color-text-primary)">Roster (4):</strong> Shila Amzah, Chriz Tong, Theresa Carpio, Lawrence Wong — real photos from CDN.<br>
+      <strong style="color:var(--color-text-primary)">Work (3):</strong> RWS Showcase feat. Shila (14 photos), Grasshopper "Be Three" feat. Chriz (8 photos), Theresa Carpio Concert (2 photos).<br>
+      <strong style="color:var(--color-text-primary)">Services (4):</strong> Entertainment Marketing, Advertising &amp; PR, Events Management &amp; Logistics, Specialised Projects.<br>
+      <strong style="color:var(--color-text-primary)">Contact:</strong> 192 Waterloo Street #07-07, Skyline Building, Singapore 187966 · +65 9685 5855.<br>
+      All images load from <code>gemstalent.com.sg/wordpress/wp-content/uploads/</code>.
+    </p>
+  </div>
+
+  <p class="section-label">Nav decisions <span class="badge badge-done">done</span></p>
+  <div class="card">
+    <p class="card-body">Always mist bg at all scroll positions. Condensed state: opaque mist + internal top→bottom gradient (0.98→0.86 alpha) + blur. No external gradient strip below nav. Logo: company stamp + "TALENT" only (GEMS removed — stamp already contains it). Footer is a 3-column grid (Studio links, real pages; Reach = mailto/tel; Journal link removed).</p>
+  </div>
+
+  <p class="section-label">Button wiring <span class="badge badge-done">done</span></p>
+  <div class="card">
+    <ul class="todo-list">
+      <li><span class="todo-num">A</span>Roster cards → <code>artistes.html#{slug}</code> · Work cards → <code>work.html#{slug}</code></li>
+      <li><span class="todo-num">B</span>"See full roster" → artistes.html · "All projects" → work.html · "Submit a brief" → contact.html#brief</li>
+      <li><span class="todo-num">C</span>Duplicate Studio column removed · 3-col footer grid · Studio links resolve to real pages</li>
+      <li><span class="todo-num">D</span>Enquiry form: "Send an enquiry" / "Send enquiry →" · controlled inputs · Phone (optional) · thank-you state · <code>id="brief"</code></li>
+    </ul>
+  </div>
+
+  <p class="section-label">Email system — Resend <span class="badge badge-done">done</span></p>
+  <div class="card">
+    <p class="card-body">Free tier: 3,000 emails/mo (~1,500 enquiries). No card required. Two emails per form submit: team notification to <code>talent@gems.sg</code> (Reply-To = enquirer) + auto-reply to enquirer echoing their message. Email Tweaks panel has 3 axes: Voice (editorial/warm/crisp), Composition (editorial/minimal/display), Brand bar (cobalt/bone/ink). Ink preset: mist header, stamp + "· TALENT" wordmark, cobalt-deep receipt card. Persisted defaults: voice=editorial, composition=editorial, header=ink.</p>
+    <p class="card-body" style="margin-top:8px;"><strong style="color:var(--color-text-primary)">Production caveat:</strong> <code>assets/gems-stamp-nav.jpg</code> is a relative path in email templates — must be replaced with an absolute public URL before going live. <code>email-preview.html</code> uses a <code>&lt;base href&gt;</code> workaround for local preview only. Full setup guide in <code>EMAIL_SETUP.md</code>.</p>
+  </div>
+
+  <p class="section-label">Open items <span class="badge badge-open">action required</span></p>
+  <ul class="todo-list">
+    <li><span class="todo-num">1</span>Upload stamp to public URL and swap <code>src</code> in both <code>email-templates/*.js</code> files before production.</li>
+    <li><span class="todo-num">2</span>Confirm <code>artistes.html</code> and <code>work.html</code> anchored elements exist for all slug links from index.</li>
+    <li><span class="todo-num">3</span>Verify "Submit a brief" deep-link scrolls correctly to <code>#brief</code> with nav offset (<code>scrollMarginTop: 96</code> already added).</li>
+    <li><span class="todo-num">4</span>Clients page is still a stub — build out or leave as-is.</li>
+    <li><span class="todo-num">5</span>Individual artiste detail pages not yet built (roster index exists).</li>
+    <li><span class="todo-num">6</span>Images currently load from external CDN — download to <code>assets/</code> for resilience.</li>
+    <li><span class="todo-num">7</span>Mobile breakpoints not yet built.</li>
+  </ul>
+
+  <p class="section-label">User preferences observed</p>
+  <div style="margin-top:4px;">
+    <span class="pref-tag">Color adds to palette, never replaces</span>
+    <span class="pref-tag">Keep brass accent</span>
+    <span class="pref-tag">No dark blue as dominant background</span>
+    <span class="pref-tag">Stamp (cobalt + teal) should be visually felt throughout</span>
+    <span class="pref-tag">Tweaks pattern: useTweaks(defaults) with EDITMODE-BEGIN/END JSON blocks</span>
+  </div>
+</div>

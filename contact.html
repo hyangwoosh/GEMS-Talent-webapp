@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact — GEMS Talent</title>
+
+  <meta name="description" content="Briefs, bookings, partnerships — drop us a line and we'll get back within two working days." />
+  <link rel="canonical" href="https://gemstalent.com.sg/contact" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="assets/gems-stamp-nav.jpg" />
+  <link rel="apple-touch-icon" href="assets/gems-stamp-nav.jpg" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="GEMS Talent" />
+  <meta property="og:title" content="Contact — GEMS Talent" />
+  <meta property="og:description" content="Briefs, bookings, partnerships — drop us a line and we'll get back within two working days." />
+  <meta property="og:url" content="https://gemstalent.com.sg/contact" />
+  <meta property="og:image" content="https://gemstalent.com.sg/assets/og-card.png" />
+  <meta property="og:locale" content="en_SG" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Contact — GEMS Talent" />
+  <meta name="twitter:description" content="Briefs, bookings, partnerships — drop us a line and we'll get back within two working days." />
+  <meta name="twitter:image" content="https://gemstalent.com.sg/assets/og-card.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <link rel="stylesheet" href="styles/styles.css" />
+  <link rel="stylesheet" href="styles/responsive.css" />
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>body[data-brass="default"]{--brass:#C9A961;--brass-soft:#b89548}</style>
+</head>
+<body data-brass="default">
+  <script src="data.js"></script>
+  <div id="root"></div>
+  <script type="text/babel" src="components/nav.jsx"></script>
+  <script type="text/babel" src="components/sections.jsx"></script>
+  <script type="text/babel" src="components/page-header.jsx"></script>
+  <script type="text/babel" data-presets="env,react">
+    const { useState, useEffect } = React;
+
+    // ─────────────────────────────────────────────────────────────────
+    // ENQUIRY FORM — wired to a serverless endpoint that sends mail via Resend.
+    // See /api/enquiry.js for the function and /email-templates/ for the
+    // HTML templates it uses. Set RESEND_API_KEY in your hosting env vars.
+    // ─────────────────────────────────────────────────────────────────
+    const ENQUIRY_ENDPOINT = "/api/enquiry";
+    const ENQUIRY_EMAIL = (window.GEMS_DATA && window.GEMS_DATA.contact && window.GEMS_DATA.contact.email) || "talent@gems.sg";
+
+    // ─────────────────────────────────────────────────────────────────
+    // Enquiry context — read ?artiste= or ?service= from the URL on
+    // first render so we can prefill the subject and show a chip above
+    // the form. The roster/service slug is sent with the POST so the
+    // team-notification email surfaces it in the subject + body.
+    // ─────────────────────────────────────────────────────────────────
+    function readEnquiryContextFromURL() {
+      if (typeof window === "undefined") return null;
+      const p = new URLSearchParams(window.location.search);
+      const artiste = p.get("artiste");
+      const service = p.get("service");
+      if (artiste) {
+        const a = (window.GEMS_DATA.roster || []).find((r) => r.slug === artiste);
+        if (a) return { kind: "artiste", slug: artiste, label: a.name };
+      }
+      if (service) {
+        const s = (window.GEMS_DATA.services || []).find((r) => r.slug === service);
+        if (s) return { kind: "service", slug: service, label: s.title };
+      }
+      return null;
+    }
+
+    function defaultSubjectFor(ctx) {
+      if (!ctx) return "";
+      if (ctx.kind === "artiste") return `Enquiry re: ${ctx.label}`;
+      if (ctx.kind === "service") return `Brief: ${ctx.label}`;
+      return "";
+    }
+
+    function ContextChip({ context, onDismiss }) {
+      if (!context) return null;
+      return (
+        <div style={{
+          marginTop: 22,
+          display: "inline-flex", alignItems: "center", gap: 12,
+          padding: "10px 8px 10px 14px",
+          border: "1px solid rgba(250,247,242,0.22)",
+          borderRadius: 999,
+          background: "rgba(250,247,242,0.06)",
+          color: "var(--bone)",
+          fontSize: 13,
+          whiteSpace: "nowrap",
+        }}>
+          <span style={{
+            fontFamily: "var(--mono)", fontSize: 10,
+            color: "var(--brass)", letterSpacing: "0.10em",
+            textTransform: "uppercase",
+          }}>
+            {context.kind === "artiste" ? "Artiste" : "Service"}
+          </span>
+          <span style={{ width: 1, height: 12, background: "rgba(250,247,242,0.22)" }} />
+          <span style={{ letterSpacing: "-0.005em" }}>{context.label}</span>
+          <button
+            type="button"
+            onClick={onDismiss}
+            aria-label="Clear enquiry context"
+            style={{
+              cursor: "pointer",
+              color: "rgba(250,247,242,0.55)",
+              padding: "0 8px",
+              fontSize: 18, lineHeight: 1,
+              marginLeft: 2,
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.color = "var(--bone)"}
+            onMouseLeave={(e) => e.currentTarget.style.color = "rgba(250,247,242,0.55)"}
+          >×</button>
+        </div>
+      );
+    }
+
+    function EnquiryForm({ context, onDismissContext }) {
+      const [form, setForm] = useState(() => ({
+        name: "", email: "", phone: "",
+        subject: defaultSubjectFor(context),
+        message: "",
+        // Honeypot — must stay empty. Bots fill every input they find.
+        company_url: "",
+      }));
+      // Form-mount timestamp. Submissions arriving in under ~1.5s are almost
+      // certainly bots; we send this along and let the server reject.
+      const [mountedAt] = useState(() => Date.now());
+      const [status, setStatus] = useState("idle"); // idle | sending | sent | error
+      const upd = (k) => (e) => setForm({ ...form, [k]: e.target.value });
+
+      // If the user lands without context, then context arrives later
+      // (e.g. browser back-forward from a slug page), keep subject in sync
+      // — but never overwrite a subject the user has already edited.
+      useEffect(() => {
+        setForm((f) => {
+          const def = defaultSubjectFor(context);
+          if (!f.subject || f.subject.startsWith("Enquiry re: ") || f.subject.startsWith("Brief: ")) {
+            return { ...f, subject: def };
+          }
+          return f;
+        });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [context && context.slug]);
+
+      const fields = [
+        { label: "Name",    type: "text",  key: "name",    required: true },
+        { label: "Email",   type: "email", key: "email",   required: true },
+        { label: "Phone (optional)", type: "tel", key: "phone", required: false },
+        { label: "Subject", type: "text",  key: "subject", required: true },
+      ];
+
+      const onSubmit = async (e) => {
+        e.preventDefault();
+        setStatus("sending");
+        try {
+          const payload = { ...form, _formMountedAt: mountedAt };
+          if (context) payload.context = context;
+          const res = await fetch(ENQUIRY_ENDPOINT, {
+            method: "POST",
+            headers: { "Accept": "application/json", "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          if (!res.ok) throw new Error("Network");
+          setStatus("sent");
+        } catch {
+          setStatus("error");
+        }
+      };
+
+      if (status === "sent") {
+        return (
+          <div style={{ marginTop: 32, color: "var(--bone)" }}>
+            <p style={{ fontSize: 18, lineHeight: 1.5 }}>
+              Thanks — your enquiry is on its way. We'll get back within two working days.
+            </p>
+            <button onClick={() => { setForm({ name:"", email:"", phone:"", subject: defaultSubjectFor(context), message:"" }); setStatus("idle"); }}
+              className="btn" style={{ marginTop: 24, color: "var(--bone)", borderColor: "rgba(250,247,242,0.4)", cursor: "pointer" }}>
+              Send another
+            </button>
+          </div>
+        );
+      }
+
+      return (
+        <>
+          <ContextChip context={context} onDismiss={onDismissContext} />
+          <form style={{ marginTop: context ? 24 : 32, display: "flex", flexDirection: "column", gap: 20 }} onSubmit={onSubmit}>
+          {/* Honeypot — kept in the DOM and named "company_url" so naïve
+              form-scrapers tab into it and fill it. Hidden from users by
+              both visual offset and aria-hidden + tabindex=-1. If it
+              arrives non-empty, /api/enquiry silently drops the request. */}
+          <div aria-hidden="true" style={{
+            position: "absolute", left: "-9999px", top: "auto",
+            width: 1, height: 1, overflow: "hidden",
+          }}>
+            <label>
+              Company URL (leave blank)
+              <input
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                name="company_url"
+                value={form.company_url}
+                onChange={upd("company_url")}
+              />
+            </label>
+          </div>
+          {fields.map(f => (
+            <label key={f.key} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <span className="eyebrow" style={{ color: "rgba(250,247,242,0.55)" }}>{f.label}</span>
+              <input type={f.type} required={f.required} value={form[f.key]} onChange={upd(f.key)} style={{
+                background: "transparent", border: "none",
+                borderBottom: "1px solid rgba(250,247,242,0.3)",
+                color: "var(--bone)", fontSize: 16, padding: "8px 0",
+                fontFamily: "var(--sans)", outline: "none",
+              }} onFocus={(e) => e.target.style.borderBottomColor = "var(--brass)"}
+                 onBlur={(e) => e.target.style.borderBottomColor = "rgba(250,247,242,0.3)"} />
+            </label>
+          ))}
+          <label style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <span className="eyebrow" style={{ color: "rgba(250,247,242,0.55)" }}>Enquiry</span>
+            <textarea rows="4" required value={form.message} onChange={upd("message")} style={{
+              background: "transparent", border: "none",
+              borderBottom: "1px solid rgba(250,247,242,0.3)",
+              color: "var(--bone)", fontSize: 16, padding: "8px 0",
+              fontFamily: "var(--sans)", outline: "none", resize: "vertical",
+            }} onFocus={(e) => e.target.style.borderBottomColor = "var(--brass)"}
+               onBlur={(e) => e.target.style.borderBottomColor = "rgba(250,247,242,0.3)"} />
+          </label>
+          {status === "error" && (
+            <p style={{ fontSize: 13, color: "var(--brass)" }}>
+              Something went wrong. Please email {ENQUIRY_EMAIL} directly.
+            </p>
+          )}
+          <button type="submit" disabled={status === "sending"} className="btn" style={{
+            alignSelf: "flex-start", marginTop: 20,
+            background: "var(--brass)", color: "var(--ink)", borderColor: "var(--brass)",
+            cursor: "pointer", opacity: status === "sending" ? 0.6 : 1,
+          }}>{status === "sending" ? "Sending…" : "Send enquiry →"}</button>
+        </form>
+        </>
+      );
+    }
+
+    function useScrollCondense(threshold = 80){
+      const [c, setC] = useState(true);
+      useEffect(() => {
+        const onScroll = () => setC(window.scrollY > threshold);
+        onScroll();
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+      }, [threshold]);
+      return c;
+    }
+    function App() {
+      // Always condensed on inner pages (no transparent hero phase)
+      useEffect(() => { document.body.setAttribute("data-brass","default"); },[]);
+      // Read ?artiste= / ?service= once, on mount.
+      const [enquiryContext, setEnquiryContext] = useState(() => readEnquiryContextFromURL());
+      return (
+        <>
+          <Nav condensed={true} />
+          <main>
+            
+      <PageHeader
+        eyebrow={{ num: "06", label: "Contact" }}
+        title={<><span>Let's talk.</span></>}
+        sub="Briefs, bookings, partnerships — drop us a line and we'll get back within two working days."
+      />
+      <section className="section">
+        <div className="container">
+          <div className="contact-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80 }}>
+            <div>
+              <div className="eyebrow"><span className="dot" />Studio</div>
+              <p style={{ fontSize: 22, marginTop: 18, lineHeight: 1.5, letterSpacing: "-0.01em" }}>
+                {window.GEMS_DATA.contact.address.split(",").map((s, i) => <span key={i} style={{ display: "block" }}>{s.trim()}</span>)}
+              </p>
+              <div style={{ marginTop: 48 }}>
+                <div className="eyebrow"><span className="dot" />Reach</div>
+                <p style={{ fontSize: 22, marginTop: 18, lineHeight: 1.6 }}>
+                  <a href={"tel:" + window.GEMS_DATA.contact.phone}>{window.GEMS_DATA.contact.phone}</a><br/>
+                  <a href={"mailto:" + window.GEMS_DATA.contact.email} style={{ borderBottom: "1px solid var(--brass)" }}>{window.GEMS_DATA.contact.email}</a>
+                </p>
+              </div>
+            </div>
+            <div id="brief" style={{ background: "var(--cobalt-deep)", color: "var(--bone)", padding: "48px 40px", scrollMarginTop: 96 }}>
+              <div className="eyebrow" style={{ color: "rgba(250,247,242,0.6)" }}><span className="dot" />Send an enquiry</div>
+              <EnquiryForm context={enquiryContext} onDismissContext={() => setEnquiryContext(null)} />
+            </div>
+          </div>
+        </div>
+      </section>
+    
+          </main>
+          <Footer />
+        </>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>

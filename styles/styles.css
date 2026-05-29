@@ -1,0 +1,236 @@
+/* GEMS Talent — global styles */
+
+/* Type system: Inter Tight (sans) + Newsreader (serif italic accents) */
+:root{
+  --ink: #0E1A2B;
+  --bone: #E6ECF2;            /* cool mist — Option B base */
+  --bone-soft: #D8E0E8;       /* slightly deeper mist */
+  --white: #FFFFFF;
+  --brass: #C9A961;           /* accent only — dots, marks, selection */
+  --brass-soft: #b89548;
+  --slate: #5F5E5A;
+
+  /* Stamp-derived palette — cobalt-led */
+  --cobalt: #0D3FA0;          /* primary blue from stamp */
+  --cobalt-deep: #062870;     /* deeper variant for backgrounds */
+  --cobalt-soft: #2A5DC4;     /* lifted variant for hovers */
+  --teal: #1FA2C2;            /* cyan/teal accent from stamp */
+  --teal-soft: #5CC1D9;       /* lifted teal */
+  --clay: #D8E1ED;            /* deeper mist tint — section break */
+  --sage: #C8D4E0;            /* deepest cool tint — pulled toward cobalt */
+
+  --hair: rgba(14, 26, 43, 0.12);
+  --hair-strong: rgba(14, 26, 43, 0.22);
+  --hair-bone: rgba(250, 247, 242, 0.18);
+
+  --sans: "Inter Tight", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --serif: "Newsreader", "Source Serif 4", Georgia, serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --eyebrow: 11px;
+  --tracking-eye: 0.16em;
+  --max: 1440px;
+  --gutter: 56px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html, body{ background: var(--bone); color: var(--ink); }
+body{
+  font-family: var(--sans);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;color:inherit;background:none;border:0;cursor:default;padding:0}
+
+/* Eyebrow label */
+.eyebrow{
+  font-family: var(--sans);
+  font-size: var(--eyebrow);
+  font-weight: 500;
+  letter-spacing: var(--tracking-eye);
+  text-transform: uppercase;
+  color: var(--slate);
+}
+.eyebrow .dot{
+  display:inline-block; width:5px; height:5px; border-radius:50%;
+  background: var(--brass); margin-right: 10px; vertical-align: 2px;
+}
+
+/* Display sizes */
+.display{
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: clamp(56px, 8vw, 132px);
+  line-height: 0.94;
+  letter-spacing: -0.025em;
+}
+.display .em{ font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -0.015em; }
+
+.h1{ font-size: clamp(40px, 4.6vw, 76px); line-height: 1.0; letter-spacing: -0.022em; font-weight: 500; }
+.h2{ font-size: clamp(28px, 2.6vw, 44px); line-height: 1.05; letter-spacing: -0.018em; font-weight: 500; }
+.h3{ font-size: 22px; line-height: 1.2; letter-spacing: -0.01em; font-weight: 500; }
+.lede{ font-size: 22px; line-height: 1.4; letter-spacing: -0.005em; color: var(--ink); max-width: 36ch; }
+
+.mono{ font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; white-space: nowrap; }
+.serif-em{ font-family: var(--serif); font-style: italic; font-weight: 400; }
+
+/* Container */
+.container{ max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); width: 100%; }
+.full{ width: 100%; }
+.divider{ height: 1px; background: var(--hair); width: 100%; }
+.divider-strong{ height: 1px; background: var(--hair-strong); }
+
+/* Section frame (sticky eyebrow rail) */
+.section{ position: relative; padding: 120px 0; }
+.section--ink{ background: var(--ink); color: var(--bone); }
+.section--cobalt{ background: var(--cobalt-deep); color: var(--bone); }
+.section--cobalt .eyebrow{ color: rgba(250,247,242,0.65); }
+.section--cobalt .divider{ background: rgba(250,247,242,0.18); }
+.section--clay{ background: var(--clay); color: var(--ink); }
+.section--sage{ background: var(--sage); color: var(--ink); }
+.section--ink .eyebrow{ color: rgba(250,247,242,0.6); }
+.section--ink .divider{ background: var(--hair-bone); }
+.sec-rail{
+  position: sticky; top: 96px; align-self: flex-start;
+  font-size: var(--eyebrow); font-weight: 500;
+  letter-spacing: var(--tracking-eye); text-transform: uppercase;
+  color: var(--slate);
+}
+.section--cobalt .sec-rail{ color: rgba(250,247,242,0.55); }
+.section--cobalt .sec-rail .num{ color: var(--teal); }
+.section--ink .sec-rail{ color: rgba(250,247,242,0.55); }
+.sec-rail .num{ color: var(--brass); margin-right: 12px; }
+
+/* Layout grid for sections with rail */
+.rail-grid{
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 64px;
+}
+
+/* Buttons */
+.btn{
+  display: inline-flex; align-items: center; gap: 14px;
+  height: 48px; padding: 0 22px;
+  border-radius: 999px;
+  font-size: 14px; font-weight: 500; letter-spacing: -0.005em;
+  border: 1px solid currentColor;
+  white-space: nowrap;
+  transition: background 200ms ease, color 200ms ease, transform 200ms ease;
+}
+.btn:hover{ transform: translateY(-1px); }
+.btn--solid-ink{ background: var(--ink); color: var(--bone); border-color: var(--ink); }
+.btn--solid-ink:hover{ background: #1a2940; }
+.btn--ghost-bone{ color: var(--bone); border-color: rgba(250,247,242,.4); }
+.btn--ghost-bone:hover{ background: rgba(250,247,242,.08); border-color: var(--bone); }
+.btn--ghost-ink{ color: var(--ink); border-color: rgba(14,26,43,.3); }
+.btn--ghost-ink:hover{ background: rgba(14,26,43,.04); border-color: var(--ink); }
+.btn .arrow{ width: 14px; height: 14px; }
+
+/* Sticky-eyebrow scroll markers reveal */
+.reveal{ opacity: 0; transform: translateY(28px); transition: opacity 700ms cubic-bezier(.2,.7,.2,1), transform 700ms cubic-bezier(.2,.7,.2,1); }
+.reveal.in{ opacity: 1; transform: none; }
+.reveal-2{ transition-delay: 80ms; }
+.reveal-3{ transition-delay: 160ms; }
+.reveal-4{ transition-delay: 240ms; }
+
+/* Striped placeholder image (used for project imagery) */
+.striped{
+  position: relative; overflow: hidden; background: #1a2436; color: var(--bone);
+}
+.striped::before{
+  content: "";
+  position: absolute; inset: 0;
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(31,162,194,0.22) 0 14px,
+    rgba(255,255,255,0) 14px 28px
+  );
+  pointer-events: none;
+}
+.striped--bone{ background: #ece7dc; color: var(--ink); }
+.striped--bone::before{
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(14,26,43,0.04) 0 14px,
+    rgba(14,26,43,0) 14px 28px
+  );
+}
+.striped .strip-meta{
+  position: absolute; left: 16px; bottom: 14px; right: 16px;
+  display: flex; justify-content: space-between; align-items: flex-end;
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.06em;
+  text-transform: uppercase; opacity: 0.85;
+}
+
+/* Solid roster placeholder */
+.roster-img{
+  position: relative;
+  aspect-ratio: 3/4;
+  background: var(--ink);
+  color: var(--brass);
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 600ms cubic-bezier(.2,.7,.2,1);
+}
+.roster-img .ini{
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(80px, 9vw, 128px);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.roster-img::after{
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(120% 80% at 30% 30%, rgba(201,169,97,0.15), transparent 60%);
+  pointer-events: none;
+}
+.roster-img--bone{ background: #ece7dc; color: var(--ink); }
+.roster-img--bone .ini{ color: var(--ink); opacity: 0.85; }
+
+/* Marquee */
+.marquee{
+  position: relative; overflow: hidden;
+  border-block: 1px solid var(--hair);
+  padding: 28px 0;
+}
+.marquee-track{
+  display: flex; gap: 64px;
+  animation: marquee 60s linear infinite;
+  width: max-content;
+}
+.marquee-item{
+  font-family: var(--sans);
+  font-size: 26px; font-weight: 500; letter-spacing: -0.01em;
+  color: var(--ink);
+  white-space: nowrap;
+  display: flex; align-items: center; gap: 64px;
+}
+.marquee-item .sep{ color: var(--brass); font-size: 10px; }
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Custom scrollbar — discreet */
+::-webkit-scrollbar{ width: 10px; height: 10px; }
+::-webkit-scrollbar-track{ background: transparent; }
+::-webkit-scrollbar-thumb{ background: rgba(14,26,43,0.2); border-radius: 8px; border: 2px solid var(--bone); }
+::-webkit-scrollbar-thumb:hover{ background: rgba(14,26,43,0.4); }
+
+/* Selection */
+::selection{ background: var(--cobalt); color: var(--white); }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .marquee-track{ animation: none; }
+}
