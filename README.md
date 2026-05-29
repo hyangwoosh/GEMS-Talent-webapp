@@ -113,7 +113,12 @@ serves as a flat folder of files on any host.
 | File | Notes |
 |---|---|
 | `docs/handoff.md` | **Read first.** Rolling session log: what landed, current open items, design tokens, file map. Updated at the end of every working session. |
-| `docs/EMAIL_SETUP.md` | Resend account setup, env vars, MX records for sender domain verification |
+| `docs/DEPLOYMENT_RUNBOOK.md` | 8-phase migration plan: WordPress → Netlify + Zoho. Acceptance criteria, decision rationale, rollback. For Claude Code. |
+| `docs/DECISIONS.md` | 12 architectural decision records (ADRs). Locked decisions w/ reasoning. Don't re-litigate without raising it. |
+| `docs/ZOHO_TEAM_SETUP.md` | One-pager for the 4 staff members. Email-client setup for iOS, Android, macOS, Outlook, Thunderbird. |
+| `docs/redirects.md` | WordPress URL → React URL map. Contains the Netlify `_redirects` block to drop at repo root pre-deploy. |
+| `docs/CLAUDE_CODE_START.md` | First-prompt guide. How the user opens their first Claude Code session. |
+| `docs/EMAIL_SETUP.md` | Resend account setup, env vars, MX records for sender domain verification. |
 | `CLAUDE.md` | (Lives at root for Claude auto-discovery.) Project context: design system, conventions, single-source-of-truth rules |
 | `uploads/` | Earlier handoffs + WordPress XML export. Read-only historical reference, not active project files. |
 
@@ -159,11 +164,13 @@ Deploy target: **Netlify** (free tier, commercial use allowed).
 Email hosting: **Zoho Mail** (free tier, up to 5 users).
 Domain: `gemstalent.com.sg` (Exabytes registrar).
 
-See `docs/handoff.md` § "Deployment plan" for the step-by-step.
+See `docs/DEPLOYMENT_RUNBOOK.md` for the full 8-phase migration plan with
+acceptance criteria per phase. See `docs/handoff.md` for current session
+status.
 
 The site itself is pure static — point any host at the repo root and it'll serve.
 The only piece requiring a runtime is `api/enquiry.js` (form handler), which
-becomes a Netlify Function on deploy.
+becomes a Netlify Function on deploy (Phase 2 of the runbook).
 
 ---
 

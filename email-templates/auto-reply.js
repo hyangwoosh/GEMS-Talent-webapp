@@ -217,7 +217,7 @@ module.exports = function autoReply(d, opts) {
               <td valign="top" style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:${MUTED};width:50%;">
                 Reach
                 <div style="font-size:14px;margin-top:6px;line-height:1.7;text-transform:none;letter-spacing:0;">
-                  <a href="mailto:hello@gemstalent.com.sg" style="color:${COBALT};text-decoration:none;">hello@gemstalent.com.sg</a><br/>
+                  <a href="mailto:marketing@gemstalent.com.sg" style="color:${COBALT};text-decoration:none;">marketing@gemstalent.com.sg</a><br/>
                   <span style="color:${INK};">+65 9685 5855</span>
                 </div>
               </td>

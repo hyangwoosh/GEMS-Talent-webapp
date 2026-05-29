@@ -390,7 +390,7 @@ window.GEMS_DATA = {
     },
     direct: {
       eyebrow: "Get in touch",
-      title: "hello@gemstalent.com.sg",
+      title: "marketing@gemstalent.com.sg",
       sub: "192 Waterloo Street #07-07 · Singapore 187966",
     },
   },
@@ -399,7 +399,7 @@ window.GEMS_DATA = {
   contact: {
     address: "192 Waterloo Street #07-07, Skyline Building, Singapore 187966",
     phone: "+65 9685 5855",
-    email: "hello@gemstalent.com.sg",
+    email: "marketing@gemstalent.com.sg",
   },
 
   // ─────────── BACKGROUND / FILLER IMAGES ───────────

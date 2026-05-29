@@ -1,59 +1,87 @@
-# GEMS Talent — Session handoff (May 2026, session 7)
+# GEMS Talent — Session handoff (May 2026, session 8)
 Singapore talent agency · Desktop-first editorial prototype · React 18 + Babel CDN · Inline JSX
 
 ## What landed this session
 
-### 1. Project restructured into folders (pre-Git handoff)
+### 1. Claude Code handoff package written
 
-   Up to session 6 everything was flat at repo root. With the project
-   about to live in Git + alternate between Claude Code (deploy) and
-   Claude design (UI/UX), a flat root no longer scales. Restructured
-   into a conventional layout while keeping HTML pages at root so URLs
-   stay clean.
+   The previous session staged the repo for Git. This session writes the
+   docs Claude Code needs to take over deployment + email migration
+   without re-deriving decisions.
 
-   **Moved:**
-   - `hero.jsx` · `nav.jsx` · `sections.jsx` · `page-header.jsx` ·
-     `tweaks-panel.jsx` → `components/`
-   - `styles.css` · `responsive.css` → `styles/`
-   - `handoff.md` · `EMAIL_SETUP.md` → `docs/`
+   **New files in `docs/`:**
+   - **`DEPLOYMENT_RUNBOOK.md`** — 8-phase plan (0 → 8) with explicit
+     acceptance criteria per phase, the ⚠️ critical ordering warning
+     up top, decision rationale embedded inline, and a rollback plan.
+     This is the operational spine of the migration.
+   - **`DECISIONS.md`** — 12 architectural decision records (ADRs)
+     capturing every locked decision: Netlify (not Vercel), Zoho
+     (not Google), drop Upstash, no TypeScript/Redux/Redis/Cypress,
+     `marketing@` over `hello@`, bold cutover, etc. With reasoning.
+     Claude Code reads this to know what NOT to re-debate.
+   - **`ZOHO_TEAM_SETUP.md`** — one-pager for the 4 staff members.
+     Covers iOS Mail, Android Gmail app, macOS Mail, Outlook,
+     Thunderbird. Common-problems section included. User forwards
+     this to each staff member during Phase 5.
+   - **`redirects.md`** — parsed `uploads/gemstalent.WordPress.2026-05-05.xml`
+     to build the WordPress URL → new React URL map. Produces a
+     Netlify-format `_redirects` block to drop at repo root.
+     Preserves SEO + inbound links.
+   - **`CLAUDE_CODE_START.md`** — first-prompt guide for the user.
+     Includes the verbatim opening prompt, expected response,
+     suggested session arc (3 sessions to complete migration), and
+     guardrails for when Claude Code should escalate to a Claude
+     design session.
 
-   **Stayed at root** (deliberate):
-   - All `*.html` pages — location ↔ URL.
-   - `data.js` — single content source, referenced by every page.
-   - `CLAUDE.md` — Claude auto-discovery is root-only.
-   - `README.md`, `.gitignore` — GitHub convention.
-   - `api/`, `email-templates/`, `scripts/`, `assets/`, `uploads/`
-     — already conventional locations.
+### 2. Public email swap landed (data.js + cascade fixups)
 
-   **Reference updates done in the same pass:**
-   - 41 `<script>` / `<link>` refs updated across 8 HTML files
-     (`index`, `artistes`, `clients`, `work`, `services`, `about`,
-     `contact`, `email-preview`). `og-card.html` + `og-card-photo.html`
-     had no refs to move — fully self-contained.
-   - `CLAUDE.md` updated: "Read first" pointer → `docs/handoff.md`,
-     single-source-of-truth table paths refreshed, new "Project
-     layout" section added so future Claude sessions immediately
-     understand the structure.
-   - `README.md` file map refreshed end-to-end with a top-level
-     tree diagram + subsystem tables.
+   Decided this session: drop `hello@gemstalent.com.sg` (placeholder
+   that never existed as a mailbox), use `marketing@gemstalent.com.sg`
+   (real mailbox) as the public-facing address. ADR-007 documents
+   this + preserves the option to create `hello@` on Zoho later as a
+   forward to `marketing@`.
 
-### 2. Repo prepared for initial Git push (carried over)
+   Files touched:
+   - `data.js` — both `footerCTAs.direct.title` AND `contact.email`
+   - `components/sections.jsx` — fallback in `Footer` component
+   - `email-templates/auto-reply.js` — hardcoded mailto in the email
+     template
+   - `docs/EMAIL_SETUP.md` — sample address in domain-verification
+     instructions
 
-   Session 6 wrote `.gitignore` and `README.md` and walked the user
-   through the GitHub repo creation choices (disable README, disable
-   .gitignore, no license — private commercial repo defaults to all
-   rights reserved). Project zip generated and downloaded.
+   Zero remaining references to `hello@gemstalent.com.sg` in active
+   code. Historical mentions in `docs/handoff.md` (session 6 entry)
+   and `uploads/` left intact — they document what happened, not
+   what is.
 
-   User then deleted the local extract after deciding to wait for the
-   restructure. Next zip (session 7 → download) is the canonical
-   initial-push payload.
+### 3. User-side prep confirmed (locked in DECISIONS.md)
 
-### 3. Footer-CTA mailto unified (carried over from session 6) ✅
+   - **Resend:** account exists, API key generated, domain
+     `gemstalent.com.sg` verified. Ready for Phase 2 env-var paste.
+   - **Exabytes:** user has registrar admin access. Confirmed.
+   - **DMARC:** Resend provided their own (more complete) DMARC
+     record. Use as-is, skip `rua=` reporting for now.
+   - **Google Search Console:** user has TXT verification record
+     to add; batched with all other DNS adds in Phase 3.
+   - **Cutover style:** bold (one-weekend full flip). Confirmed:
+     mailboxes aren't actively receiving live mail, so blip risk ≈ 0.
+   - **Mbox backup:** scheduled in Phase 4a. User has 1.3 Gbps
+     downlink — backup is ~5–10 min.
 
-   `components/sections.jsx` L396 now reads
-   `window.GEMS_DATA.contact.email` (= `hello@gemstalent.com.sg`) for
-   both `href` and label. Internal `talent@gems.sg` stays as the
-   team-notification destination via env vars.
+## What landed in session 7 (carried forward, for reference)
+
+- Project restructured into folders: `components/`, `styles/`, `docs/`.
+  HTML pages stay at root for URL cleanliness. `data.js`, `CLAUDE.md`,
+  `README.md`, `.gitignore` stay at root by convention.
+- 41 `<script>`/`<link>` refs updated across 8 HTML pages.
+- `CLAUDE.md` got a new "Project layout" section.
+- `README.md` file map rewritten end-to-end.
+
+## What landed in session 6 (carried forward)
+
+- Footer-CTA mailto unified to read `data.js.contact.email` (closed open item #10).
+- `.gitignore` + initial `README.md` written for Git push.
+- Deployment direction decided: Netlify Free + Zoho Free + GitHub as spine.
 
 ## File map (current state)
 
@@ -86,9 +114,14 @@ Singapore talent agency · Desktop-first editorial prototype · React 18 + Babel
 │   ├── styles.css               Global tokens + utilities
 │   └── responsive.css           Tweaks panel ceiling: 100svh fallback
 │
-├── docs/                        ✨ NEW location
+├── docs/                        Documentation
 │   ├── handoff.md               THIS FILE — rolling session log
-│   └── EMAIL_SETUP.md           Resend + Upstash (Vercel-flavored — needs Netlify pass)
+│   ├── DEPLOYMENT_RUNBOOK.md    ✨ NEW — 8-phase migration plan
+│   ├── DECISIONS.md             ✨ NEW — 12 ADRs, locked decisions
+│   ├── ZOHO_TEAM_SETUP.md       ✨ NEW — one-pager for the 4 staff
+│   ├── redirects.md             ✨ NEW — WP → React URL map + _redirects block
+│   ├── CLAUDE_CODE_START.md     ✨ NEW — first-prompt guide for user
+│   └── EMAIL_SETUP.md           Resend setup (still Vercel-flavored — Claude Code refreshes during Phase 2)
 │
 ├── api/
 │   └── enquiry.js               Vercel format — convert to Netlify Function during deploy
@@ -111,80 +144,24 @@ Singapore talent agency · Desktop-first editorial prototype · React 18 + Babel
 └── uploads/                     WP XML export + earlier handoffs (~2 MB)
 ```
 
-## Deployment plan (for Claude Code session)
+## Deployment plan (handed off to Claude Code)
 
-**Target end state:** `https://gemstalent.com.sg` serves the React site
-from Netlify with auto-SSL, inboxes for the 4 mailboxes flow to Zoho,
-contact form lands enquiries via Resend with branded auto-reply.
+**Full plan moved to `docs/DEPLOYMENT_RUNBOOK.md`** — 8 phases (0 → 8) with
+explicit acceptance criteria, the ⚠️ critical ordering warning at top,
+decision rationale embedded inline, and a rollback plan. Claude Code
+reads it as the first task of every session.
 
-⚠️ **CRITICAL ORDERING.** The live React site currently loads 17 talent
-/ work images from the WordPress CDN at `gemstalent.com.sg/wordpress/...`.
-Those URLs are hardcoded in `data.js`. **If Exabytes hosting is cancelled
-before those images are localized (open item #3), every talent portrait
-and work case-study image on the new Netlify site breaks irrecoverably.**
-Localize first, deploy second, cancel Exabytes last.
+**One-line summary of phase order:**
+> Phase 0 (repo) → Phase 0.5 (localize CDN ⚠️) → Phase 1–2 (staging deploy + form fn) → Phase 3–5 (email setup, backup, IMAP migrate) → Phase 6 (DNS cutover) → Phase 7 (24–48 hr verify) → Phase 8 (sunset Exabytes)
 
-**Phase 0 — GitHub setup (done here):** `.gitignore`, `README.md`
-written. User creates private repo (no README / no .gitignore / no
-license at creation), pushes initial commit. Hand off to Claude Code.
-
-**Phase 0.5 — Localize CDN images (open item #3) ⚠️ DO BEFORE DEPLOY.**
-In Claude Code, run `node scripts/download-cdn-images.mjs --rewrite-data`
-while the WordPress site is still live and reachable. Script pulls all
-17 images into `assets/cdn/` and rewrites `data.js` paths in one pass.
-Commit the result. After this, the site has no external dependencies
-and Exabytes can be safely sunset later.
-
-**Phase 1 — Netlify staging deploy.** Link GitHub repo to Netlify.
-Auto-deploys to `gemstalent.netlify.app`. No DNS touched. Verify site
-loads end-to-end on the staging URL.
-
-**Phase 2 — Form endpoint conversion.** Port `api/enquiry.js` from
-Vercel format to Netlify Function format (`netlify/functions/enquiry.js`).
-Set env vars on Netlify dashboard: `RESEND_API_KEY`, `ENQUIRY_TO`,
-`ENQUIRY_FROM`, `ENQUIRY_REPLY_TO`, `STAMP_URL`. Drop Upstash for
-simplicity (in-memory fallback handles the volume — <100 enquiries/mo).
-Update `contact.html` to POST to `/.netlify/functions/enquiry`.
-
-**Phase 3 — Zoho domain verification + mailbox creation.** Sign up
-Zoho, add TXT record for verification (DNS still on Exabytes/registrar
-at this point — just adding a verification record, no MX changes yet).
-Create the 4 mailboxes mirroring Exabytes. Configure SPF/DKIM/DMARC
-records.
-
-**Phase 4 — IMAP migration.** Use Zoho's built-in migration tool to
-copy mail from Exabytes IMAP. Volume: ~1 GB total (terence.tan@ is
-903 MB, marketing@ 54 MB, others negligible). Background sync; runs
-1–3 hours.
-
-**Phase 5 — Email clients on devices.** 4 staff add Zoho to their
-phones / desktops. Existing Exabytes accounts can stay configured
-in parallel during cutover for redundancy.
-
-**Phase 6 — DNS cutover.** At registrar (Exabytes assumed pending
-confirmation): update A/CNAME records to Netlify, update MX records
-to Zoho. ~5–60 min propagation. AutoSSL kicks in automatically
-once Netlify sees the domain.
-
-**Phase 7 — Verify + monitor.** Send test emails (in + out), verify
-form submission end-to-end, watch for issues for 24–48 hours.
-Zoho's incremental migration can pull any stragglers that landed
-at Exabytes during cutover.
-
-**Phase 8 — Sunset Exabytes (only after Phase 7 stable).** At renewal,
-either cancel outright or downgrade to email-only plan as a fallback
-safety window. Do NOT cancel before Phase 0.5 is committed AND Phase 7
-is verified stable — once Exabytes hosting is off, the old WP CDN is
-unreachable forever.
-
-**Total active work:** ~3–4 hours, ideally over a weekend.
-
-**Open data points for Claude Code:**
-1. Confirm registrar of `gemstalent.com.sg` (Exabytes assumed).
-2. Confirm whether `hello@gemstalent.com.sg` (referenced in
-   `data.js.contact.email`) exists as a real mailbox, an alias, or
-   not at all. Not visible in the Exabytes mailbox screenshot the
-   user shared.
+**Locked decisions** (full details in `docs/DECISIONS.md`):
+- Netlify Free (commercial-OK), not Vercel Hobby (no-commercial ToS).
+- Zoho Mail Free (5-user limit fits 4 mailboxes), not Google Workspace.
+- Drop Upstash rate limit; keep in-memory fallback only.
+- Keep Resend (branded auto-reply with brass stamp). No Formspree.
+- Bold cutover (one-weekend full flip).
+- Public email: `marketing@gemstalent.com.sg` (not `hello@`).
+- No TypeScript / Redux / Redis / Cypress — all rejected with reasoning.
 
 ## Locked design system (unchanged)
 
@@ -210,19 +187,20 @@ recalcs with chrome); `100svh` for ceilings that must never overflow
 
 | #   | Item                                              | Notes |
 |-----|---------------------------------------------------|-------|
-| 1   | Replace placeholder client/testimonial copy       | DDB, Edelman, Tiger Beer + both testimonial quotes still plausible filler. `data.js → clientGroups[]` + `testimonials[]`. |
-| 2   | Upload stamp + set STAMP_URL on Vercel            | **Recontextualize:** now Netlify env var, not Vercel. Set during deploy Phase 2. |
-| 3   | Run CDN download (one-shot now)                   | `node scripts/download-cdn-images.mjs --rewrite-data` — downloads 17 images AND rewrites `data.js` in one pass. **Best run in Claude Code** during repo init, before first deploy. |
-| 4   | Re-render `og-card-photo.png` with real photo     | After #3 lands. `scripts/build-og-card-photo.mjs` (Playwright) — photo auto-detects from `/assets/cdn/`. |
-| 6   | Distinct artiste portraits                        | Lawrence Wong + Theresa Carpio still share an image for `image` and `portrait` in `data.js → roster[]`. User to provide new images. |
-| 7   | Real UEN                                          | Add to `data.js.contact.uen`; footer © line auto-includes it. User to provide. |
-| 8   | Real-device QA of responsive treatment            | Services-row stack on iOS, drawer on iOS Safari (now with `svh`/`dvh`), tweaks panel clamp on small screens. **Best after Netlify staging deploy** — share `gemstalent.netlify.app` to phones. |
-| 11  | Convert `api/enquiry.js` → Netlify Function       | ~10 lines of differences (handler signature, response format). Drop Upstash dep. Update `contact.html` POST target. **NEW — for Claude Code Phase 2.** |
-| 12  | Update `docs/EMAIL_SETUP.md` for Netlify          | Currently Vercel-flavored. Refresh env-var dashboard instructions. |
-| 13  | Path-update sweep for any `<style>` or inline JS  | None known. Spot check during Claude Code first-run — if anything still references `styles.css` / `*.jsx` without a folder prefix, fix in one pass. **NEW — session 7 restructure follow-through.** |
+| 1   | Replace placeholder client/testimonial copy       | DDB, Edelman, Tiger Beer + both testimonial quotes still plausible filler. `data.js → clientGroups[]` + `testimonials[]`. **Deferred to post-launch.** |
+| 3   | Run CDN download (Phase 0.5 of runbook)           | First action Claude Code takes. **Critical — do before deploy + before sunset.** |
+| 6   | Distinct artiste portraits                        | Lawrence Wong + Theresa Carpio share an image. User to provide new images. **Deferred to post-launch.** |
+| 7   | Real UEN                                          | Add to `data.js.contact.uen`; footer © line auto-includes it. **Deferred to post-launch.** |
+| 8   | Real-device QA of responsive treatment            | After Phase 1 staging deploy — share `gemstalent.netlify.app` to phones. |
+| 11  | Convert `api/enquiry.js` → Netlify Function       | Phase 2 of the runbook. Drop Upstash. |
+| 12  | Refresh `docs/EMAIL_SETUP.md` for Netlify         | Phase 2 of the runbook. |
+| 14  | Add `_redirects` to repo root before Phase 1      | Copy content from `docs/redirects.md`. **NEW.** |
+| 15  | (Future) Create `hello@` on Zoho with forward     | ADR-007 future option. Polish, not launch-blocking. |
 
-(Items 5, 9, 10 closed in prior sessions. Session 7 was structural only — no
-feature items closed; #11/#12 still open and now carry corrected paths.)
+(Items 5, 9, 10 closed in prior sessions. Items 2, 4, 13 retired this session
+— #2 folded into Phase 2 runbook task, #4 deferred until post-launch when
+real photo lands, #13 verified done (no stragglers found in session 7
+grep sweep).)
 
 ## User preferences observed (carry forward)
 

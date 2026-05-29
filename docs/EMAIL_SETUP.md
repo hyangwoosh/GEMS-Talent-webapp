@@ -18,7 +18,7 @@ no monthly fee, mail comes from your own domain.
 - Resend gives you 3 DNS records (SPF, DKIM, DMARC) to add at your domain
   registrar. Add them, click "Verify" — usually takes <10 min to propagate.
 - Once verified, you can send from anything @ that domain
-  (e.g. `enquiries@gemstalent.com.sg`, `hello@gemstalent.com.sg`).
+  (e.g. `enquiries@gemstalent.com.sg`, `marketing@gemstalent.com.sg`).
 
 > If you want to skip this for testing: Resend lets you send from
 > `onboarding@resend.dev` immediately, but only to your own verified

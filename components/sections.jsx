@@ -418,7 +418,7 @@ function Footer() {
   // line is rendered only when window.GEMS_DATA.contact.uen is set;
   // until a real UEN is supplied we omit it rather than show a placeholder.
   const C = (window.GEMS_DATA && window.GEMS_DATA.contact) || {};
-  const email = C.email || "hello@gemstalent.com.sg";
+  const email = C.email || "marketing@gemstalent.com.sg";
   const phone = C.phone || "";
   const phoneHref = "tel:" + (phone || "").replace(/[^+\d]/g, "");
   const year = new Date().getFullYear();
