@@ -2,7 +2,7 @@
 // Image URLs reference the live WordPress media library at gemstalent.com.sg.
 // Replace with /assets/ paths once images are downloaded into the project.
 
-const CDN = "https://gemstalent.com.sg/wordpress/wp-content/uploads";
+const CDN = "assets/cdn";
 
 window.GEMS_DATA = {
   // ─────────── FEATURED WORK (hero rotator + work preview) ───────────
@@ -13,7 +13,7 @@ window.GEMS_DATA = {
       subtitle: "feat. Shila Amzah",
       meta: "Live showcase · Sentosa · 2025",
       role: "Talent management · Hospitality · Production",
-      image: `${CDN}/2026/05/RWS-Exclusive-Showcase-Shila-Amzah.jpg`,
+      image: `${CDN}/RWS-Exclusive-Showcase-Shila-Amzah.jpg`,
       tone: "ink",
     },
     {
@@ -22,7 +22,7 @@ window.GEMS_DATA = {
       subtitle: "feat. Chriz Tong",
       meta: "Concert · Arena of Stars · 2024",
       role: "Artiste appearance · Logistics",
-      image: `${CDN}/2026/05/Chriz-Tong-01.jpg`,
+      image: `${CDN}/Chriz-Tong-01.jpg`,
       tone: "ink",
     },
     {
@@ -31,7 +31,7 @@ window.GEMS_DATA = {
       subtitle: "An evening with Theresa",
       meta: "Concert · 2024",
       role: "Production · Marketing",
-      image: `${CDN}/2026/05/THERESA-CARPIO-CONCERT-01.jpg`,
+      image: `${CDN}/THERESA-CARPIO-CONCERT-01.jpg`,
       tone: "ink",
     },
     {
@@ -40,7 +40,7 @@ window.GEMS_DATA = {
       subtitle: "Performance gallery",
       meta: "Live · 2025",
       role: "Talent curation · Production",
-      image: `${CDN}/2026/05/RWS-Exclusive-Showcase-Shila-Amzah-05.jpg`,
+      image: `${CDN}/RWS-Exclusive-Showcase-Shila-Amzah-05.jpg`,
       tone: "ink",
     },
     {
@@ -49,7 +49,7 @@ window.GEMS_DATA = {
       subtitle: "Grasshopper Be Three Live",
       meta: "Concert · 2024",
       role: "Artiste hospitality · Logistics",
-      image: `${CDN}/2026/05/Chriz-Tong-04.jpg`,
+      image: `${CDN}/Chriz-Tong-04.jpg`,
       tone: "ink",
     },
   ],
@@ -67,8 +67,8 @@ window.GEMS_DATA = {
       based: "Kuala Lumpur · Singapore",
       languages: "Malay · Mandarin · English",
       credits: "RWS Exclusive Showcase · Astro · Sing! China",
-      image: `${CDN}/2026/05/RWS-Exclusive-Showcase-Shila-Amzah-03.jpg`,
-      portrait: `${CDN}/2026/05/RWS-Exclusive-Showcase-Shila-Amzah.jpg`,
+      image: `${CDN}/RWS-Exclusive-Showcase-Shila-Amzah-03.jpg`,
+      portrait: `${CDN}/RWS-Exclusive-Showcase-Shila-Amzah.jpg`,
       bio: [
         "A multi-platinum, multi-language vocalist with a career spanning competition stages, sold-out concerts, and brand campaigns across Asia. Shila moves comfortably between Malay, Mandarin, and English repertoire.",
         "Represented by GEMS for hospitality bookings, brand partnerships, and corporate showcases in Singapore and the wider region. Recent work includes an exclusive evening showcase at Resorts World Sentosa.",
@@ -91,8 +91,8 @@ window.GEMS_DATA = {
       based: "Singapore",
       languages: "Mandarin · English",
       credits: "Grasshopper Be Three · Genting",
-      image: `${CDN}/2026/05/GEMS-chriz-Tong.png`,
-      portrait: `${CDN}/2026/05/Chriz-Tong-01.jpg`,
+      image: `${CDN}/GEMS-chriz-Tong.png`,
+      portrait: `${CDN}/Chriz-Tong-01.jpg`,
       bio: [
         "A Mandopop vocalist with a deep stage instinct — equally at home on an arena's main floor and on an intimate cabaret platform. Chriz has shared stages with Grasshopper, Kit Chan, and the Be Three Live touring company.",
         "Represented by GEMS for live appearances, brand engagements, and concert featurings across Singapore, Malaysia, and Hong Kong.",
@@ -114,8 +114,8 @@ window.GEMS_DATA = {
       based: "Hong Kong",
       languages: "Cantonese · English · Mandarin",
       credits: "Theresa Carpio Concert · 2024",
-      image: `${CDN}/2026/05/THERESA-CARPIO-CONCERT-02.jpg`,
-      portrait: `${CDN}/2026/05/THERESA-CARPIO-CONCERT-01.jpg`,
+      image: `${CDN}/THERESA-CARPIO-CONCERT-02.jpg`,
+      portrait: `${CDN}/THERESA-CARPIO-CONCERT-01.jpg`,
       bio: [
         "A legendary Hong Kong vocalist with over four decades of recordings, stage performances, and television work. Theresa's repertoire spans Cantopop, jazz standards, and original musical theatre.",
         "Represented by GEMS for Southeast Asia concert engagements and festival appearances.",
@@ -137,8 +137,8 @@ window.GEMS_DATA = {
       based: "Singapore",
       languages: "English · Mandarin",
       credits: "Mediacorp · Star Awards",
-      image: `${CDN}/2026/05/Lawrence-Wong.jpg`,
-      portrait: `${CDN}/2026/05/Lawrence-Wong.jpg`,
+      image: `${CDN}/Lawrence-Wong.jpg`,
+      portrait: `${CDN}/Lawrence-Wong.jpg`,
       bio: [
         "One of Singapore's most recognisable on-screen talents — a Mediacorp leading man with Star Awards credits, brand campaigns, and a growing international film slate.",
         "Represented by GEMS for hospitality appearances, brand partnerships, and regional press engagements.",
@@ -404,30 +404,47 @@ window.GEMS_DATA = {
 
   // ─────────── BACKGROUND / FILLER IMAGES ───────────
   backgrounds: {
-    heroBg:    `${CDN}/2021/05/hero-bg.jpg`,
-    aboutImg:  `${CDN}/2021/05/about.jpg`,
-    ctaImg:    `${CDN}/2021/05/cta-img.jpg`,
-    gallery1:  `${CDN}/2021/05/gallery-1.jpg`,
-    gallery2:  `${CDN}/2021/05/gallery-2.jpg`,
-    gallery3:  `${CDN}/2021/05/gallery-3.jpg`,
+    heroBg:    `${CDN}/hero-bg.jpg`,
+    aboutImg:  `${CDN}/about.jpg`,
+    ctaImg:    `${CDN}/cta-img.jpg`,
+    gallery1:  `${CDN}/gallery-1.jpg`,
+    gallery2:  `${CDN}/gallery-2.jpg`,
+    gallery3:  `${CDN}/gallery-3.jpg`,
   },
 
   // RWS gallery (14 photos)
-  rwsGallery: Array.from({ length: 14 }, (_, i) => {
-    const num = String(i + 2).padStart(2, "0"); // 02..15
-    return i === 0
-      ? `${CDN}/2026/05/RWS-Exclusive-Showcase-Shila-Amzah.jpg`
-      : `${CDN}/2026/05/RWS-Exclusive-Showcase-Shila-Amzah-${num}.jpg`;
-  }),
+  rwsGallery: [
+    `${CDN}/RWS-Exclusive-Showcase-Shila-Amzah.jpg`,
+    `${CDN}/RWS-Exclusive-Showcase-Shila-Amzah-03.jpg`,
+    `${CDN}/RWS-Exclusive-Showcase-Shila-Amzah-04.jpg`,
+    `${CDN}/RWS-Exclusive-Showcase-Shila-Amzah-05.jpg`,
+    `${CDN}/RWS-Exclusive-Showcase-Shila-Amzah-06.jpg`,
+    `${CDN}/RWS-Exclusive-Showcase-Shila-Amzah-07.jpg`,
+    `${CDN}/RWS-Exclusive-Showcase-Shila-Amzah-08.jpg`,
+    `${CDN}/RWS-Exclusive-Showcase-Shila-Amzah-09.jpg`,
+    `${CDN}/RWS-Exclusive-Showcase-Shila-Amzah-10.jpg`,
+    `${CDN}/RWS-Exclusive-Showcase-Shila-Amzah-11.jpg`,
+    `${CDN}/RWS-Exclusive-Showcase-Shila-Amzah-12.jpg`,
+    `${CDN}/RWS-Exclusive-Showcase-Shila-Amzah-13.jpg`,
+    `${CDN}/RWS-Exclusive-Showcase-Shila-Amzah-14.jpg`,
+    `${CDN}/RWS-Exclusive-Showcase-Shila-Amzah-15.jpg`,
+  ],
 
   // Chriz Tong gallery (8 photos)
-  chrizGallery: Array.from({ length: 8 }, (_, i) =>
-    `${CDN}/2026/05/Chriz-Tong-${String(i + 1).padStart(2, "0")}.jpg`
-  ),
+  chrizGallery: [
+    `${CDN}/Chriz-Tong-01.jpg`,
+    `${CDN}/Chriz-Tong-02.jpg`,
+    `${CDN}/Chriz-Tong-03.jpg`,
+    `${CDN}/Chriz-Tong-04.jpg`,
+    `${CDN}/Chriz-Tong-05.jpg`,
+    `${CDN}/Chriz-Tong-06.jpg`,
+    `${CDN}/Chriz-Tong-07.jpg`,
+    `${CDN}/Chriz-Tong-08.jpg`,
+  ],
 
   // Theresa Carpio gallery (2 photos)
   theresaGallery: [
-    `${CDN}/2026/05/THERESA-CARPIO-CONCERT-01.jpg`,
-    `${CDN}/2026/05/THERESA-CARPIO-CONCERT-02.jpg`,
+    `${CDN}/THERESA-CARPIO-CONCERT-01.jpg`,
+    `${CDN}/THERESA-CARPIO-CONCERT-02.jpg`,
   ],
 };
