@@ -1,0 +1,24 @@
+# ─── WordPress page redirects (preserve SEO + inbound links) ───
+# Old URL                              New URL          Status
+/wordpress/                            /                301
+/wordpress/services/                   /services        301
+/wordpress/our-services/               /services        301
+/wordpress/about-2/                    /about           301
+/wordpress/about/                      /about           301
+/wordpress/contact/                    /contact         301
+/wordpress/our-artistes/               /artistes        301
+/wordpress/our-clients/                /clients         301
+/wordpress/our-works/                  /work            301
+
+# ─── Defunct paths (gone, not migrated) ───
+/wordpress/customer-cabinet-2/         /                301
+/wordpress/customer-cabinet/           /                301
+/wordpress/hello-world/                /                410!
+
+# ─── WP admin / login (no equivalent on static site) ───
+/wordpress/wp-admin                    /                301
+/wordpress/wp-admin/*                  /                301
+/wordpress/wp-login.php                /                301
+
+# ─── Catch-all: any unmapped /wordpress/* URL goes to home ───
+/wordpress/*                           /                301
