@@ -202,6 +202,43 @@
 
 ---
 
+## ADR-013 — Static gallery arrays in data.js (no Array.from)
+
+**Decision:** `rwsGallery` and `chrizGallery` are explicit static arrays, not `Array.from()` generators.
+
+**Why:**
+- `Array.from()` generates URLs at runtime — any tooling that statically analyzes `data.js`
+  (download scripts, grep, linters) silently misses the generated URLs.
+- The original script captured the raw JS expression (`Chriz-Tong-${String(i+1)...}`) as
+  a malformed URL and would have blocked `--rewrite-data`.
+- Static arrays are easier to read, grep, and diff.
+- No behavioral change — same images, same order.
+
+**When to revisit:** never for this scale. If gallery grows past ~50 images, consider a
+separate data file.
+
+---
+
+## ADR-014 — Exabytes exit order: email → domain transfer → DNS → cancel hosting
+
+**Decision:** When cancelling Exabytes, the order is non-negotiable:
+1. Migrate email first (Zoho Lite or Migadu) — flip MX
+2. Transfer domain to Cloudflare Registrar
+3. Move DNS to Cloudflare during transfer
+4. Cancel Exabytes hosting only after domain transfer confirmed + DNS stable
+
+**Why:**
+- Domain is registered through Exabytes (expires 12/08/2026). Cancelling hosting
+  before transferring the domain risks losing DNS resolution for the entire domain.
+- Email is on Microsoft 365 (MX → `gemstalent-com-sg.mail.protection.outlook.com`),
+  not Exabytes mail — so email migration is separate from web hosting cancellation.
+- Cloudflare Registrar is free (ICANN cost only) and gives permanent DNS independence.
+
+**Zoho Free plan note:** No longer available for new custom-domain signups in Singapore
+as of May 2026. Use Zoho Mail Lite (SGD ~80/yr for 4 users) or Migadu (USD 9/mo flat).
+
+---
+
 ## Decision-amendment protocol
 
 If you (future Claude Code or Claude design session) need to revisit a decision:
