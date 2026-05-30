@@ -1,89 +1,130 @@
 # GEMS Talent — Session handoff (May 2026, session 9)
 Singapore talent agency · Desktop-first editorial prototype · React 18 + Babel CDN · Inline JSX
 
-## What landed this session
+---
 
-### Phase 0.5 — CDN image localization (complete)
+## State of the world right now
 
-- `scripts/download-cdn-images.mjs` had a bug: `Array.from()` gallery arrays
-  (`rwsGallery`, `chrizGallery`) generate URLs at runtime — script couldn't
-  statically enumerate them, captured raw JS expressions as malformed URLs.
-- Fixed: expanded both galleries to explicit static arrays in `data.js`.
-  Also fixed a comment bug (`02..15` said but code generated `03..15`).
-- Downloaded **32 images** (was 17 — the original count missed all gallery images)
-  into `assets/cdn/`. `data.js` CDN const rewritten to `"assets/cdn"`, date
-  segments stripped. Zero `gemstalent.com.sg/wordpress` refs remain.
-- `assets/cdn-map.json` written (original URL → local path).
-- Committed and pushed: `d7bef80`
+**Site is LIVE at `https://gemstalent.com.sg`** — new React site, not WordPress.
+- Netlify hosting, auto-deploys from GitHub `main`.
+- SSL cert provisioned (white lock = secure, confirmed on phone).
+- All 7 pages load, talent portraits render, contact form works end-to-end.
+- DNS propagated on mobile/external networks. PC still showing old cached IP (router cache, resolves itself — not a problem).
 
-### Open item #14 — `_redirects` file (complete)
+**Email is on Microsoft 365** — not Exabytes, not Zoho.
+- MX → `gemstalent-com-sg.mail.protection.outlook.com`
+- SPF → `include:spf.protection.outlook.com`
+- autodiscover CNAME → `autodiscover.outlook.com`
+- Someone set up M365 Business for `gemstalent.com.sg` at some point. Subscription not found in Exabytes client area — likely billed directly through Microsoft.
+- **Status unknown:** password to `marketing@gemstalent.com.sg` not known. Need to find who owns the M365 admin account (likely Terence).
+- A test email was sent to `marketing@gemstalent.com.sg` — whether it delivered is unconfirmed (inbox not accessed yet).
 
-- `_redirects` added at repo root (copied from `docs/redirects.md`).
-- 9 WP page redirects + defunct paths + wp-admin catch-all.
-- Committed and pushed: `f2f79f1`
+**Exabytes hosting:** active, next due 12/08/2026, billing SGD 626.60 triennially (cPanel 13 Plus). Domain also registered through Exabytes.
 
-### Phase 1 — Netlify staging deploy (complete)
+---
 
+## What landed this session (in order)
+
+### Phase 0 — Repo gate
+Clean. Remote confirmed at `github.com:hyangwoosh/GEMS-Talent-webapp`.
+
+### Phase 0.5 — CDN image localization ✓
+- Found bug: `rwsGallery` and `chrizGallery` used `Array.from()` — script couldn't statically enumerate gallery URLs, captured raw JS expressions as malformed URLs.
+- Fixed: expanded both to explicit static arrays in `data.js`. Also fixed comment bug (`02..15` said, `03..15` actual — no `-02.jpg` file exists on WP).
+- Downloaded **32 images** into `assets/cdn/` (original estimate was 17 — missed all gallery images).
+- `data.js` CDN const rewritten to `"assets/cdn"`, date segments stripped. Zero WP refs remain.
+- `assets/cdn-map.json` written.
+- Committed: `d7bef80`
+
+### Open item #14 — `_redirects` ✓
+- `_redirects` file created at repo root from `docs/redirects.md`.
+- Committed: `f2f79f1`
+
+### Phase 1 — Netlify staging deploy ✓
 - Site deployed at `https://gemstalent.netlify.app`.
-- All 7 pages load, talent portraits render, no 404s.
-- Tweaks panel confirmed unused in production (component loaded but not instantiated).
+- All acceptance criteria passed: 7 pages, portraits, no 404s.
+- Site renamed to `gemstalent` in Netlify (Project configuration → Change project name).
 
-### Phase 2 — Netlify Function + form endpoint (complete)
-
-- `netlify/functions/enquiry.js` written (Netlify handler signature).
-- Upstash dropped per ADR-005 — in-memory rate limit only.
-- `netlify.toml` created: publish=`.`, functions=`netlify/functions`,
-  redirect `/api/enquiry` → `/.netlify/functions/enquiry`.
+### Phase 2 — Netlify Function ✓
+- `netlify/functions/enquiry.js` written (Netlify handler, in-memory rate limit, Upstash dropped per ADR-005).
+- `netlify.toml`: publish=`.`, functions=`netlify/functions`, redirect `/api/enquiry` → `/.netlify/functions/enquiry`.
 - `api/enquiry.js` deleted.
-- `docs/EMAIL_SETUP.md` rewritten for Netlify (was Vercel-flavored).
-- Env vars set in Netlify dashboard: `RESEND_API_KEY`, `ENQUIRY_TO`,
-  `ENQUIRY_FROM`, `STAMP_URL`.
-- Form tested end-to-end: both emails (team notification + auto-reply)
-  confirmed delivered via Resend dashboard.
-- Committed and pushed: `64a1b30`
+- `docs/EMAIL_SETUP.md` rewritten for Netlify.
+- Env vars set in Netlify: `RESEND_API_KEY`, `ENQUIRY_TO` (terence.tan@gemstalent.com.sg), `ENQUIRY_FROM`, `STAMP_URL` (gemstalent.netlify.app — needs update post-cutover).
+- Form tested: both emails confirmed in Resend dashboard (team notification + auto-reply).
+- Committed: `64a1b30`
 
-### Phase 3–5 — Email migration (deferred)
+### Phases 3–5 — Email migration (deferred — situation changed)
+- Zoho Free no longer available for new custom-domain signups in SG.
+- Discovered email is already on **Microsoft 365**, not Exabytes.
+- M365 subscription exists but admin credentials unknown — need Terence to identify.
+- If M365 is confirmed active: no email migration needed at all. Phases 3–5 retired.
+- If M365 turns out to be broken/expired: migrate to Zoho Mail Lite (SGD 80/yr, 4 users).
 
-- Zoho Free plan no longer available for new custom-domain signups in SG.
-- Email discovered to be on **Microsoft 365** (MX → `gemstalent-com-sg.mail.protection.outlook.com`),
-  NOT Exabytes mail. Exabytes is web hosting only.
-- Exabytes email-only plan: SGD 324/yr — not competitive.
-- Decision: defer email migration until ready to cancel Exabytes.
-- Recommendation when ready: **Zoho Mail Lite** (SGD 80/yr, 4 users) or
-  **Migadu** (SGD 145/yr flat unlimited users).
+### Phase 6 — DNS cutover (site only) ✓
+- A record: `103.7.8.221` → `75.2.60.5` (Netlify).
+- www CNAME: `gemstalent.com.sg` → `gemstalent.netlify.app`.
+- MX untouched (Microsoft 365 email unaffected).
+- Custom domains added in Netlify dashboard.
+- Confirmed live on Exabytes nameservers (`ns135/136.sgcloudhosting.cloud`).
+- Site confirmed loading on phone + mobile network.
+- **Rollback if needed:** revert A → `103.7.8.221`, www CNAME → `gemstalent.com.sg`.
 
-### Phase 6 — DNS cutover (site only, in progress)
+---
 
-- A record changed: `103.7.8.221` → `75.2.60.5` (Netlify load balancer).
-- www CNAME changed: `gemstalent.com.sg` → `gemstalent.netlify.app`.
-- MX records left untouched (Microsoft 365 email unaffected).
-- Custom domains added in Netlify: `gemstalent.com.sg` + `www.gemstalent.com.sg`.
-- Confirmed live on Exabytes nameservers (`ns135/136.sgcloudhosting.cloud` → `75.2.60.5`).
-- Waiting for ISP/local DNS cache to clear (TTL 14400, up to 4 hours).
-- **Rollback:** revert A record to `103.7.8.221`, www CNAME to `gemstalent.com.sg`.
+## First things to do next session
 
-## Discoveries this session
+1. **Confirm M365 status** — ask Terence (or whoever handles IT) to log into `admin.microsoft.com` with the M365 admin account. Confirm:
+   - Subscription is active and paid
+   - All 4 mailboxes exist: `jojo@`, `marketing@`, `shinethw@`, `terence.tan@gemstalent.com.sg`
+   - Staff can receive email (check if test email from this session arrived in `marketing@`)
+   - If confirmed active → Phases 3–5 are retired, email is already handled.
+   - If expired/broken → proceed with Zoho Mail Lite migration (Phases 3–5).
 
-- **Email is on Microsoft 365**, not Exabytes. MX, autodiscover CNAME, SPF all
-  point at Microsoft. Resend DKIM + send subdomain already configured in DNS.
-- **Domain is registered through Exabytes** (expires 12/08/2026, auto-renew on).
-  Must transfer domain before cancelling Exabytes hosting.
-- **Exabytes exit plan** (when ready to cancel):
-  1. Disable hosting auto-renew
-  2. Migrate email (Zoho Lite or Migadu) — flip MX
-  3. Transfer domain to Cloudflare Registrar (free, ~5 days, needs EPP code)
-  4. Move DNS to Cloudflare (import existing records during transfer)
-  5. Cancel Exabytes hosting
+2. **Update `STAMP_URL` env var in Netlify** — change from `https://gemstalent.netlify.app/assets/gems-stamp-nav.jpg` to `https://gemstalent.com.sg/assets/gems-stamp-nav.jpg`. Trigger redeploy. (Open item #16)
 
-## What's next (Phase 7)
+3. **Phase 7 verification** (24–48 hr monitor):
+   - [ ] `https://gemstalent.com.sg` loads correctly on desktop (PC DNS cache should clear)
+   - [ ] All 7 pages work
+   - [ ] Contact form tested on production domain (`gemstalent.com.sg/contact`)
+   - [ ] No bounce notifications in M365 mailboxes
+   - [ ] Netlify function logs clean (Logs & metrics → Functions → enquiry)
 
-- Wait for `gemstalent.com.sg` to resolve to `75.2.60.5` on local DNS.
-- Verify site loads at `https://gemstalent.com.sg` with valid SSL cert.
-- Monitor 24–48 hrs: no bounce notifications, form still works on production URL,
-  no 404s or broken images.
-- Test contact form on production domain end-to-end.
-- After Phase 7 stable: update `STAMP_URL` env var in Netlify from
-  `gemstalent.netlify.app/...` to `gemstalent.com.sg/...`.
+4. **Disable Exabytes hosting auto-renew** — client area → My Services → hosting plan → Request Cancellation (this is how Exabytes stops auto-renew; next due 12/08/2026 so not urgent but do it before forgetting).
+
+---
+
+## Exabytes exit plan (when ready — not urgent until mid-2026)
+
+**Prerequisites before cancelling hosting:**
+1. Confirm M365 situation (step 1 above)
+2. Migrate email if M365 is broken (Zoho Lite or Migadu)
+3. Transfer domain from Exabytes → Cloudflare Registrar (free, ~5 days, need EPP/auth code from Exabytes)
+4. Move DNS to Cloudflare (import all Zone Editor records during transfer)
+5. Cancel Exabytes hosting only after domain transfer confirmed + DNS stable
+
+**Key facts:**
+- Domain registered through Exabytes, expires 12/08/2026 — must transfer before cancelling hosting
+- Exabytes email-only plan: SGD 324/yr — not worth it vs Zoho Lite SGD 80/yr
+- cPanel email accounts on Exabytes go unused (MX routes to M365, not cPanel)
+
+---
+
+## Open items
+
+| # | Item | Priority | Notes |
+|---|---|---|---|
+| 1 | Confirm M365 subscription status | **HIGH — do first** | Find admin, check all 4 mailboxes active |
+| 2 | Update STAMP_URL env var in Netlify | High | Change to gemstalent.com.sg domain |
+| 3 | Phase 7 monitoring | High | 24–48 hr verify post-cutover |
+| 4 | Disable Exabytes hosting auto-renew | Medium | Before 12/08/2026 |
+| 5 | Replace placeholder client/testimonial copy | Low — post-launch | data.js → clientGroups[], testimonials[] |
+| 6 | Distinct artiste portraits | Low — post-launch | Lawrence Wong + Theresa Carpio share image |
+| 7 | Real UEN | Low — post-launch | Add to data.js.contact.uen |
+| 8 | Real-device QA responsive | Low | Test on phones once PC DNS clears |
+| 9 | Exabytes full exit | When ready | See exit plan above |
+
+---
 
 ## File map (current state)
 
@@ -92,103 +133,77 @@ Singapore talent agency · Desktop-first editorial prototype · React 18 + Babel
 ├── .gitignore
 ├── README.md
 ├── CLAUDE.md
-├── data.js                      🔑 CDN now points at assets/cdn (local)
-├── netlify.toml                 ✨ NEW — build config + /api/enquiry redirect
-├── _redirects                   ✨ NEW — WP → React URL map
+├── data.js                      CDN → assets/cdn (local, 32 images)
+├── netlify.toml                 Build config + /api/enquiry redirect
+├── _redirects                   WP → React URL map (17 rules)
 │
-├── index.html
-├── artistes.html
-├── clients.html
-├── work.html
-├── services.html
-├── about.html
-├── contact.html
-├── og-card.html
-├── og-card-photo.html
-├── email-preview.html
+├── index.html · artistes.html · clients.html · work.html
+├── services.html · about.html · contact.html
+├── og-card.html · og-card-photo.html · email-preview.html
 │
 ├── components/
-│   ├── hero.jsx
-│   ├── nav.jsx
-│   ├── sections.jsx
-│   ├── page-header.jsx
-│   └── tweaks-panel.jsx
+│   ├── hero.jsx · nav.jsx · sections.jsx
+│   ├── page-header.jsx · tweaks-panel.jsx
 │
 ├── styles/
-│   ├── styles.css
-│   └── responsive.css
+│   ├── styles.css · responsive.css
 │
 ├── docs/
 │   ├── handoff.md               THIS FILE
 │   ├── DEPLOYMENT_RUNBOOK.md    8-phase plan (phases 0–2 + 6 complete)
-│   ├── DECISIONS.md             12 ADRs
-│   ├── ZOHO_TEAM_SETUP.md       Staff onboarding (deferred)
-│   ├── redirects.md             WP → React URL map (source)
+│   ├── DECISIONS.md             14 ADRs (ADR-013 gallery arrays, ADR-014 Exabytes exit)
+│   ├── ZOHO_TEAM_SETUP.md       Staff onboarding (deferred — M365 may make this moot)
+│   ├── redirects.md             WP → React URL map (source for _redirects)
 │   ├── CLAUDE_CODE_START.md     First-prompt guide
-│   └── EMAIL_SETUP.md           ✨ UPDATED — Netlify-flavored
+│   └── EMAIL_SETUP.md           Netlify-flavored (updated this session)
 │
 ├── netlify/
 │   └── functions/
-│       └── enquiry.js           ✨ NEW — Netlify Function (replaces api/enquiry.js)
+│       └── enquiry.js           Netlify Function (replaces deleted api/enquiry.js)
 │
 ├── email-templates/
-│   ├── team-notification.js
-│   └── auto-reply.js
+│   ├── team-notification.js · auto-reply.js
 │
 ├── scripts/
-│   ├── download-cdn-images.mjs
+│   ├── download-cdn-images.mjs  (run complete — do not re-run unless images change)
 │   ├── build-og-card-photo.mjs
 │   └── build-og-card-photo-canvas.recipe.js
 │
 ├── assets/
-│   ├── cdn/                     ✨ NEW — 32 localized images
-│   ├── cdn-map.json             ✨ NEW — URL → local path map
-│   ├── gems-stamp-nav.jpg
-│   ├── gems-stamp.jpg
-│   ├── og-card.png
-│   └── og-card-photo.png
+│   ├── cdn/                     32 localized images (all gallery + portrait + bg)
+│   ├── cdn-map.json             Original URL → local path map
+│   ├── gems-stamp-nav.jpg · gems-stamp.jpg
+│   └── og-card.png · og-card-photo.png
 │
 └── uploads/                     WP XML export + earlier handoffs (read-only)
 ```
 
-## Open items for the next session
+---
 
-| # | Item | Notes |
-|---|---|---|
-| 1 | Replace placeholder client/testimonial copy | DDB, Edelman, Tiger Beer + testimonial quotes. `data.js → clientGroups[]` + `testimonials[]`. Deferred post-launch. |
-| 6 | Distinct artiste portraits | Lawrence Wong + Theresa Carpio share image. User to provide. Deferred post-launch. |
-| 7 | Real UEN | Add to `data.js.contact.uen`. Deferred post-launch. |
-| 8 | Real-device QA | Test `gemstalent.com.sg` on phones once DNS resolves. |
-| 16 | Update STAMP_URL env var | Change from `gemstalent.netlify.app/...` to `gemstalent.com.sg/...` after Phase 7 stable. |
-| 17 | Exabytes exit (when ready) | Email migration → domain transfer → DNS to Cloudflare → cancel hosting. See "Exabytes exit plan" above. |
-| 18 | Disable Exabytes hosting auto-renew | Do before next billing cycle to avoid unwanted charge. |
-
-(Items 3, 11, 12, 14 closed this session. Items 3–5 deferred — Zoho free plan unavailable.)
-
-## Locked design system (unchanged)
+## Locked design system (unchanged — do not modify)
 
 **Palette — Cool Mist + Cobalt-Led**
-  Mist `#E6ECF2` · Cobalt `#0D3FA0` · Cobalt-deep `#062870` · Cobalt-soft `#2A5DC4`
-  Teal `#1FA2C2` · Teal-soft `#5CC1D9`
-  Brass `#C9A961` — accent only
-  Clay `#D8E1ED` · Sage `#C8D4E0` — section tints · Ink `#0E1A2B`
+Mist `#E6ECF2` · Cobalt `#0D3FA0` · Cobalt-deep `#062870` · Cobalt-soft `#2A5DC4`
+Teal `#1FA2C2` · Teal-soft `#5CC1D9` · Brass `#C9A961` (accent only)
+Clay `#D8E1ED` · Sage `#C8D4E0` (section tints) · Ink `#0E1A2B`
 
-**Type** — Inter Tight (sans, 400/500/600). Newsreader italic reserved for show/concert
-title citations only (`<span className="serif-em">`).
+**Type** — Inter Tight 400/500/600. Newsreader italic for show title citations only.
+JetBrains Mono for eyebrow rails + numerals.
 
-**Eyebrow rail** — 11px tracked +0.16em, brass dot.
+**Breakpoints** — 1100 / 900 / 600. Hamburger ≤900. Tap targets ≥44px.
 
-**Mobile breakpoints** — 1100 / 900 / 600.
+**Viewport units** — `100vh` fallback first, then `100dvh` (fill) or `100svh` (ceiling).
 
-**Viewport units** — `100vh` fallback, then `100dvh` (fill) or `100svh` (ceiling).
+---
 
-## Locked decisions (do not re-debate)
+## Locked decisions (do not re-debate — see docs/DECISIONS.md for full ADRs)
 
-See `docs/DECISIONS.md` for full ADRs. Key locked decisions:
-- Netlify Free (not Vercel — commercial ToS)
-- Zoho Mail Lite when ready to migrate email (not Google, not Exabytes)
-- Drop Upstash — in-memory rate limit only
-- Keep Resend for branded auto-reply
-- `marketing@gemstalent.com.sg` as public email
+- Netlify Free (not Vercel — commercial ToS issue)
+- Zoho Mail Lite if email migration needed (not Google, not Exabytes)
+- Upstash dropped — in-memory rate limit only (ADR-005)
+- Resend for branded auto-reply (not Formspree)
+- `marketing@gemstalent.com.sg` as public-facing email
 - No TypeScript / Redux / Redis / Cypress
 - `data.js` single source of truth, zero build step
+- Gallery arrays must be static (not Array.from) — ADR-013
+- Exabytes exit order: email → domain transfer → DNS → cancel hosting (ADR-014)
