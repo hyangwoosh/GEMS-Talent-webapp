@@ -11,13 +11,13 @@ Singapore talent agency · Desktop-first editorial prototype · React 18 + Babel
 - All 7 pages load, talent portraits render, contact form works end-to-end.
 - DNS propagated on mobile/external networks. PC still showing old cached IP (router cache, resolves itself — not a problem).
 
-**Email is on Microsoft 365** — not Exabytes, not Zoho.
+**Email is on Microsoft 365** — confirmed active, SGD ~$6.30 USD/month, 3 mailboxes.
 - MX → `gemstalent-com-sg.mail.protection.outlook.com`
 - SPF → `include:spf.protection.outlook.com`
 - autodiscover CNAME → `autodiscover.outlook.com`
-- Someone set up M365 Business for `gemstalent.com.sg` at some point. Subscription not found in Exabytes client area — likely billed directly through Microsoft.
-- **Status unknown:** password to `marketing@gemstalent.com.sg` not known. Need to find who owns the M365 admin account (likely Terence).
-- A test email was sent to `marketing@gemstalent.com.sg` — whether it delivered is unconfirmed (inbox not accessed yet).
+- **Confirmed mailboxes:** `christina@`, `marketing@`, `terence.tan@gemstalent.com.sg`
+- `jojo@` and `shinethw@` do NOT exist on this subscription.
+- Phases 3–5 (email migration) retired — email is already handled.
 
 **Exabytes hosting:** active, next due 12/08/2026, billing SGD 626.60 triennially (cPanel 13 Plus). Domain also registered through Exabytes.
 
@@ -74,12 +74,7 @@ Clean. Remote confirmed at `github.com:hyangwoosh/GEMS-Talent-webapp`.
 
 ## First things to do next session
 
-1. **Confirm M365 status** — ask Terence (or whoever handles IT) to log into `admin.microsoft.com` with the M365 admin account. Confirm:
-   - Subscription is active and paid
-   - All 4 mailboxes exist: `jojo@`, `marketing@`, `shinethw@`, `terence.tan@gemstalent.com.sg`
-   - Staff can receive email (check if test email from this session arrived in `marketing@`)
-   - If confirmed active → Phases 3–5 are retired, email is already handled.
-   - If expired/broken → proceed with Zoho Mail Lite migration (Phases 3–5).
+1. ~~**Confirm M365 status**~~ ✓ **Done** — M365 active, 3 mailboxes confirmed (`christina@`, `marketing@`, `terence.tan@`). Phases 3–5 retired.
 
 2. **Update `STAMP_URL` env var in Netlify** — change from `https://gemstalent.netlify.app/assets/gems-stamp-nav.jpg` to `https://gemstalent.com.sg/assets/gems-stamp-nav.jpg`. Trigger redeploy. (Open item #16)
 
@@ -114,7 +109,7 @@ Clean. Remote confirmed at `github.com:hyangwoosh/GEMS-Talent-webapp`.
 
 | # | Item | Priority | Notes |
 |---|---|---|---|
-| 1 | Confirm M365 subscription status | **HIGH — do first** | Find admin, check all 4 mailboxes active |
+| 1 | ~~Confirm M365 subscription status~~ | ~~HIGH~~ DONE | Active, $6.30 USD/mth, 3 mailboxes confirmed |
 | 2 | Update STAMP_URL env var in Netlify | High | Change to gemstalent.com.sg domain |
 | 3 | Phase 7 monitoring | High | 24–48 hr verify post-cutover |
 | 4 | Disable Exabytes hosting auto-renew | Medium | Before 12/08/2026 |

@@ -201,129 +201,136 @@ git push
 
 ---
 
-## Phase 3 — Zoho Mail domain verification + mailbox creation
+## Phase 3 — Zoho Mail Lite setup + mailbox creation
 
-**Pre-condition:** none — Zoho setup can happen in parallel with Phases 1–2.
+> **Context (updated session 10):** Email source is Microsoft 365, not Exabytes cPanel.
+> 3 active mailboxes confirmed: `christina@`, `marketing@`, `terence.tan@gemstalent.com.sg`.
+> Zoho Free is unavailable for new custom-domain signups in SG — use **Zoho Mail Lite** ($1 USD/user/month, billed annually = $36/yr for 3 users).
+> Site DNS already cut over (Phase 6 site portion complete). Phase 6 now covers MX-only cutover.
 
-1. User signs up for **Zoho Mail Free** at `https://www.zoho.com/mail/`. Free plan supports up to 5 mailboxes per domain — fits the 4-mailbox setup.
-2. **Add domain** `gemstalent.com.sg`. Zoho asks for a TXT verification record.
-3. User adds the TXT record at Exabytes cPanel → **Zone Editor** → select `gemstalent.com.sg`. *(Safe additive record — does not affect existing email.)*
+**Pre-condition:** none — can run in parallel with any remaining Phase 1–2 work.
+
+1. Sign up for **Zoho Mail Lite** at `https://www.zoho.com/mail/`. Select "Mail Only" plan, Lite tier.
+2. **Add domain** `gemstalent.com.sg`. Zoho provides a TXT verification record.
+3. Add the TXT record in Exabytes DNS Zone Editor. *(Safe — additive, does not affect existing email or MX.)*
 4. Wait ~10 min, click "Verify" in Zoho.
-5. **Create 4 mailboxes** mirroring Exabytes:
-   - `jojo@gemstalent.com.sg`
+5. **Create 3 mailboxes** matching confirmed M365 accounts:
+   - `christina@gemstalent.com.sg`
    - `marketing@gemstalent.com.sg`
-   - `shinethw@gemstalent.com.sg`
    - `terence.tan@gemstalent.com.sg`
-6. **Configure SPF/DKIM** — Zoho generates DKIM records during setup, gives user TXT records to add at Exabytes. Existing SPF should be amended to include Zoho (`v=spf1 include:zoho.com ~all`).
-7. **DMARC** — Resend's record is already published. Leave it.
+6. **Configure DKIM** — Zoho generates DKIM TXT records after domain verification. Add them at Exabytes Zone Editor.
+7. **Update SPF** at Exabytes — amend existing SPF to include Zoho:
+   - `gemstalent.com.sg` TXT = `v=spf1 include:zoho.com include:resend.com include:spf.protection.outlook.com ~all`
+   - *(Keep the M365 SPF include until MX is fully cut over and M365 subscription cancelled.)*
+8. **DMARC** — existing record stays. No change needed.
 
-**DNS records to add upfront at Exabytes (all safe, all additive):**
-
-Batch all of these in one Zone Editor session — they don't affect existing
-email until MX records are cut over in Phase 6.
-
-- Zoho TXT verification (from Zoho dashboard)
-- Zoho DKIM TXT (from Zoho dashboard, after verification)
-- Resend TXT, MX, DKIM (from Resend dashboard — user already has these listed)
-- Resend DMARC: `_dmarc.gemstalent.com.sg` TXT = `v=DMARC1;p=none;sp=none;adkim=r;aspf=r;pct=100;fo=0;rf=afrf;ri=86400`
-- Google Search Console verification TXT (from GSC dashboard — user has the value)
-- Updated SPF: `gemstalent.com.sg` TXT = `v=spf1 include:zoho.com include:resend.com ~all` *(verify exact include directives in Resend + Zoho docs — they sometimes use a more specific subdomain)*
+**DNS records to add (all additive, safe before MX cutover):**
+- Zoho domain verification TXT (from Zoho dashboard)
+- Zoho DKIM TXT (from Zoho dashboard)
+- Updated SPF TXT (see step 7)
 
 **Acceptance criteria:**
-- [ ] All 4 mailboxes exist in Zoho
-- [ ] User can log into webmail at `mail.zoho.com` with each mailbox
-- [ ] All TXT records show as published in `dig gemstalent.com.sg TXT` (or mxtoolbox)
+- [ ] All 3 mailboxes exist in Zoho
+- [ ] Can log into `mail.zoho.com` with each mailbox
+- [ ] Zoho DKIM + updated SPF published (verify at mxtoolbox.com/spf or similar)
 
 ---
 
-## Phase 4 — Mbox backup + IMAP migration
+## Phase 4 — Email backup + IMAP migration (M365 → Zoho)
 
 **Pre-condition:** Phase 3 mailboxes exist on Zoho.
 
-### 4a — Mbox backup (belt-and-braces)
+> **Source is M365, not Exabytes cPanel.** IMAP details below are for Microsoft 365.
 
-1. User installs **Thunderbird** (free, all platforms).
-2. Add all 4 Exabytes mailboxes via **IMAP**:
-   - IMAP server: `mail.gemstalent.com.sg` (or whatever Exabytes shows in cPanel → Email Accounts → Connect Devices)
+### 4a — Backup (belt-and-braces)
+
+1. Install **Thunderbird** (free, all platforms).
+2. Add all 3 M365 mailboxes via IMAP:
+   - IMAP server: `outlook.office365.com`
    - Port: 993 (SSL/TLS)
-   - Username: full email address
-   - Password: mailbox password
-3. Let Thunderbird fully sync — at 1.3 Gbps with ~1 GB of mail, ~5–10 min.
+   - Username: full email address (e.g. `terence.tan@gemstalent.com.sg`)
+   - Password: M365 account password
+3. Let Thunderbird fully sync all folders.
 4. Install **ImportExportTools NG** add-on.
 5. For each mailbox: right-click Inbox → ImportExportTools → Export folder → mbox.
-6. Save all 4 mbox files to a folder named `gems-mail-backup-<date>/`. Zip + store somewhere safe (cloud drive, external disk).
+6. Save as `gems-mail-backup-<date>/`, zip, store safely (OneDrive, external disk).
 
-**This backup is your insurance.** If anything goes wrong in 4b, you still have everything.
+**This backup is your insurance.** If migration fails, mbox files let you restore everything.
 
 ### 4b — Zoho IMAP migration
 
-1. Zoho dashboard → **Migration** → **IMAP migration** (or "Mail migration").
-2. Create a migration batch. Settings:
-   - Source: Exabytes IMAP server (same details as Thunderbird above)
+1. Zoho dashboard → **Migration** → **IMAP migration**.
+2. For each of the 3 mailboxes, create a migration batch:
+   - Source IMAP server: `outlook.office365.com`, port 993
+   - Source credentials: M365 email + password
    - Destination: corresponding Zoho mailbox
-3. Run sequentially for each of the 4 mailboxes. Zoho will copy folder structure + all mail.
-4. **Volume:** `terence.tan@` has ~903 MB, `marketing@` has ~54 MB, others negligible. Total ~1 GB. At Zoho's import speed (~10–20 MB/min): 1–2 hrs background.
-5. Monitor in Zoho dashboard. When all 4 batches show "Completed," proceed.
+3. Run all 3 batches. Zoho copies full folder structure + all mail.
+4. Monitor in Zoho dashboard. When all 3 show "Completed," proceed.
 
 **Acceptance criteria:**
 - [ ] Mbox backup zipped and stored safely
-- [ ] All 4 Zoho mailboxes show full mail in webmail UI
-- [ ] Spot-check: open 5 random messages in Zoho, confirm content matches Exabytes original
+- [ ] All 3 Zoho mailboxes show full mail history in webmail
+- [ ] Spot-check: 5 random messages per mailbox match M365 originals
 
 ---
 
-## Phase 5 — Team members set up devices
+## Phase 5 — Staff devices reconfigured
 
 **Pre-condition:** Phases 3–4 complete.
 
-User sends each of the 4 staff members `docs/ZOHO_TEAM_SETUP.md` (which
-covers iOS Mail, Android Gmail app, Outlook, Apple Mail).
+**First:** ask each of the 3 staff members what app they currently use to read `@gemstalent.com.sg` email (could be Outlook app, Gmail app, iPhone Mail, webmail — unknown until asked). Then provide IMAP credentials for that app.
 
-**Important:** during the cutover window, each team member should keep
-**both** the Exabytes config AND the new Zoho config on their devices
-simultaneously. After Phase 7 verifies stability, they remove the Exabytes
-config.
+**Zoho IMAP settings (same for all apps):**
+- IMAP server: `imap.zoho.com`, port 993, SSL/TLS
+- SMTP server: `smtp.zoho.com`, port 465, SSL/TLS
+- Username: full email address
+- Password: Zoho mailbox password (set during Phase 3 mailbox creation)
+
+**Staff:** `christina@`, `marketing@`, `terence.tan@`
+
+**Important:** during cutover window, keep M365 config active on devices as fallback. Remove M365 config only after Phase 7 (24–48 hr monitor) passes.
 
 **Acceptance criteria:**
-- [ ] Each of 4 staff confirms they can send + receive on their devices via Zoho
-- [ ] Each staff has Exabytes config still in place as fallback
+- [ ] Each of 3 staff confirms send + receive works on their device via Zoho
+- [ ] M365 config still active as fallback until Phase 7 complete
 
 ---
 
-## Phase 6 — DNS cutover (the moment of truth)
+## Phase 6 — DNS cutover
 
-**Pre-condition:** Phases 1–5 complete and verified. **Do not start this on a Friday afternoon** — pick a low-traffic window where you can monitor for the next 24 hrs.
+> **Site cutover COMPLETE (session 9).** `gemstalent.com.sg` resolves to Netlify. SSL active.
+> This phase now covers **email MX cutover only** — swapping MX from M365 to Zoho.
 
-User logs into Exabytes registrar DNS panel.
+**Pre-condition:** Phases 3–5 complete and verified. Pick a low-traffic window (not Friday afternoon) — you need to monitor for 24 hrs after.
 
-**Records to update (existing values changing):**
+**Do not cut MX until Phase 5 (staff devices on Zoho) is confirmed.** Once MX flips, new mail routes to Zoho. Anything staff haven't picked up in M365 won't auto-follow.
+
+**Records to update at Exabytes Zone Editor:**
 
 | Type | Host | Old value | New value |
 |---|---|---|---|
-| A | `gemstalent.com.sg` | Exabytes IP | `75.2.60.5` (Netlify load balancer) |
-| CNAME | `www` | Exabytes target | `gemstalent.netlify.app` |
-| MX (priority 10) | `gemstalent.com.sg` | Exabytes mail server | `mx.zoho.com` |
-| MX (priority 20) | `gemstalent.com.sg` | (varies) | `mx2.zoho.com` |
-| MX (priority 50) | `gemstalent.com.sg` | (varies) | `mx3.zoho.com` |
+| MX (priority 10) | `gemstalent.com.sg` | `gemstalent-com-sg.mail.protection.outlook.com` | `mx.zoho.com` |
+| MX (priority 20) | `gemstalent.com.sg` | *(remove or replace)* | `mx2.zoho.com` |
+| MX (priority 50) | `gemstalent.com.sg` | *(remove or replace)* | `mx3.zoho.com` |
 
-*(Confirm Zoho's actual MX values in Zoho dashboard — they sometimes use region-specific endpoints.)*
+*(Confirm Zoho's exact MX hostnames in Zoho dashboard → Domain Details → MX Records — may be region-specific.)*
 
-**Records to leave in place** (added in Phase 3 — non-disruptive):
-- All TXT records (SPF, DKIM, DMARC, Zoho verification, GSC verification)
-- Resend MX (lives on a subdomain like `send.gemstalent.com.sg` — does not conflict)
+**Records to leave in place:**
+- A record → Netlify (already done)
+- www CNAME → Netlify (already done)
+- All TXT records (SPF, DKIM, DMARC, Zoho verification)
+- Resend MX (subdomain — does not conflict)
 
-**Propagation:** 5 min to 24 hrs depending on user ISP. Most users see new DNS within 30 min.
+**After MX update:** remove M365 SPF include from SPF record — `include:spf.protection.outlook.com` no longer needed once M365 is cancelled.
 
-**Netlify-side:**
-1. Netlify dashboard → Site settings → Domain management → Add custom domain → `gemstalent.com.sg` + `www.gemstalent.com.sg`.
-2. Netlify checks DNS, confirms, provisions Let's Encrypt cert. ~10 min after DNS resolves.
+**Propagation:** 5–30 min typical. MX propagates faster than A records.
 
 **Acceptance criteria:**
-- [ ] `dig gemstalent.com.sg A` returns Netlify IP
+- [x] `dig gemstalent.com.sg A` returns Netlify IP *(done)*
+- [x] `https://gemstalent.com.sg` loads new site with valid HTTPS *(done)*
 - [ ] `dig gemstalent.com.sg MX` returns Zoho MX records
-- [ ] `https://gemstalent.com.sg` loads the new site with a valid HTTPS cert
-- [ ] Send test email TO `marketing@gemstalent.com.sg` from a personal Gmail — arrives in Zoho within 5 min
-- [ ] Send test email FROM `marketing@gemstalent.com.sg` via Zoho webmail to a personal Gmail — arrives within 5 min (check spam folder)
+- [ ] Test email TO `marketing@gemstalent.com.sg` from personal Gmail → arrives in Zoho within 5 min
+- [ ] Test email FROM `marketing@gemstalent.com.sg` via Zoho webmail → arrives in personal Gmail within 5 min (check spam)
 
 ---
 
@@ -353,30 +360,30 @@ once more after 24 hrs to pull any stragglers. Then turn the sync off.
 
 **Pre-condition:** Phase 7 verified stable.
 
-1. Each team member removes the Exabytes mail config from their devices (keeping only Zoho).
-2. User backs up any remaining Exabytes files (cPanel → File Manager) — the WordPress site content. Download as zip, archive.
-3. User contacts Exabytes support: **do not auto-renew** at next billing cycle, OR downgrade to email-only plan as a temporary safety window (~SGD 60–100/yr) if user wants extra paranoia time before fully cutting.
-4. If cancelling outright: schedule cancellation for AFTER current billing period ends.
-5. Update `docs/handoff.md` final session: mark migration complete.
+1. Each of 3 staff removes M365 config from their devices (keeping only Zoho).
+2. Cancel M365 Business subscription — admin.microsoft.com → Billing → Your products → Cancel.
+3. Back up any remaining Exabytes files (cPanel → File Manager) — WordPress site content. Download as zip, archive.
+4. Disable Exabytes hosting auto-renew (next due 12/08/2026) — My Services → Request Cancellation.
+5. Transfer domain from Exabytes → Cloudflare Registrar before cancelling hosting (need EPP/auth code from Exabytes, ~5 days). See handoff.md Exabytes exit plan.
+6. Update `docs/handoff.md` final session: mark migration complete.
 
-**Money saved:** ~SGD 209/yr (full plan) → SGD 0 (full cancel) or ~SGD 80/yr (email-only fallback).
+**Money saved:**
+- M365: ~$227 USD/yr → Zoho Lite: ~$36 USD/yr = **$191/yr saved**
+- Exabytes hosting: SGD 626.60 triennial → $0 after cancel
 
 ---
 
-## Rollback plan (in case Phase 6 goes badly)
+## Rollback plan (in case Phase 6 MX cutover goes badly)
 
-DNS changes are reversible — every record we change has its old value
-documented in the table above. To rollback:
+Site rollback is no longer applicable — Netlify DNS is stable and correct.
 
-1. Revert MX records at Exabytes registrar to original values.
-2. Revert A record to original Exabytes IP.
-3. Wait for propagation. Mail and site flow back to Exabytes.
-4. Mbox backup from Phase 4a preserves any mail that came in during the
-   broken window — restore via IMAP push back to Exabytes if needed.
+**Email rollback only:**
 
-**Worst-case data loss:** mail that arrived during the broken window and
-wasn't captured by either Zoho or Exabytes. Bounded by retry behavior of
-sending servers (~24 hr typical retry window). Real loss: near-zero.
+1. Revert MX records at Exabytes to M365: `gemstalent-com-sg.mail.protection.outlook.com` (priority 10).
+2. Wait for propagation (~5–30 min). New mail resumes routing to M365.
+3. Mbox backup from Phase 4a preserves any mail received by Zoho during the broken window.
+
+**Worst-case data loss:** mail received by Zoho after MX flip that staff haven't read yet. Retrieve from Zoho webmail manually. Sending servers retry for ~24 hrs — real loss near-zero.
 
 ---
 
@@ -387,7 +394,7 @@ See `docs/DECISIONS.md` for the full decision log. Quick summary:
 | Decision | Why |
 |---|---|
 | Netlify, not Vercel | Vercel Hobby ToS prohibits commercial use. Pro is $20/mo. Netlify Free allows commercial. |
-| Zoho, not Google Workspace | Free up to 5 users (fits 4-mailbox setup). Google would be ~SGD 460/yr. |
+| Zoho Mail Lite, not Google Workspace | $36/yr for 3 users vs ~$227/yr M365 or ~$216/yr Google. Email-only — no productivity suite needed. |
 | Drop Upstash rate limit | Over-engineered for <100 enquiries/mo. In-memory fallback handles the volume. |
 | Keep Resend (not Formspree) | Preserves branded auto-reply with brass stamp. |
 | Bold cutover (one weekend) | Mailboxes aren't actively receiving mail — blip risk is effectively zero. |
