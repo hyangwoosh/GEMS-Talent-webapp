@@ -54,12 +54,12 @@ Clean. Remote confirmed at `github.com:hyangwoosh/GEMS-Talent-webapp`.
 - Form tested: both emails confirmed in Resend dashboard (team notification + auto-reply).
 - Committed: `64a1b30`
 
-### Phases 3–5 — Email migration (deferred — situation changed)
-- Zoho Free no longer available for new custom-domain signups in SG.
-- Discovered email is already on **Microsoft 365**, not Exabytes.
-- M365 subscription exists but admin credentials unknown — need Terence to identify.
-- If M365 is confirmed active: no email migration needed at all. Phases 3–5 retired.
-- If M365 turns out to be broken/expired: migrate to Zoho Mail Lite (SGD 80/yr, 4 users).
+### Phases 3–5 — Email migration (M365 → Zoho — ACTIVE)
+- Zoho Free unavailable for new custom-domain signups in SG — plan is **Zoho Mail Lite** (~$36 USD/yr for 3 users).
+- Source confirmed as Microsoft 365 (not Exabytes cPanel). 3 active mailboxes: `christina@`, `marketing@`, `terence.tan@`.
+- Decision: migrate to Zoho to save ~$191 USD/yr vs M365 (~$227/yr).
+- Runbook phases 3–5 already updated to reflect M365 → Zoho IMAP migration path.
+- **Not yet started.** Begin Phase 3 next session.
 
 ### Phase 6 — DNS cutover (site only) ✓
 - A record: `103.7.8.221` → `75.2.60.5` (Netlify).
@@ -74,9 +74,9 @@ Clean. Remote confirmed at `github.com:hyangwoosh/GEMS-Talent-webapp`.
 
 ## First things to do next session
 
-1. ~~**Confirm M365 status**~~ ✓ **Done** — M365 active, 3 mailboxes confirmed (`christina@`, `marketing@`, `terence.tan@`). Phases 3–5 retired.
+1. ~~**Confirm M365 status**~~ ✓ **Done** — M365 active, 3 mailboxes confirmed (`christina@`, `marketing@`, `terence.tan@`).
 
-2. **Update `STAMP_URL` env var in Netlify** — change from `https://gemstalent.netlify.app/assets/gems-stamp-nav.jpg` to `https://gemstalent.com.sg/assets/gems-stamp-nav.jpg`. Trigger redeploy. (Open item #16)
+2. **Update `STAMP_URL` env var in Netlify** — change from `https://gemstalent.netlify.app/assets/gems-stamp-nav.jpg` to `https://gemstalent.com.sg/assets/gems-stamp-nav.jpg`. Trigger redeploy. (Open item #2)
 
 3. **Phase 7 verification** (24–48 hr monitor):
    - [ ] `https://gemstalent.com.sg` loads correctly on desktop (PC DNS cache should clear)
@@ -85,7 +85,9 @@ Clean. Remote confirmed at `github.com:hyangwoosh/GEMS-Talent-webapp`.
    - [ ] No bounce notifications in M365 mailboxes
    - [ ] Netlify function logs clean (Logs & metrics → Functions → enquiry)
 
-4. **Disable Exabytes hosting auto-renew** — client area → My Services → hosting plan → Request Cancellation (this is how Exabytes stops auto-renew; next due 12/08/2026 so not urgent but do it before forgetting).
+4. **Start Phase 3** — Zoho Mail Lite signup, domain verification, create 3 mailboxes. See `docs/DEPLOYMENT_RUNBOOK.md` Phase 3 for step-by-step.
+
+5. **Disable Exabytes hosting auto-renew** — client area → My Services → hosting plan → Request Cancellation (next due 12/08/2026, not urgent but do before forgetting).
 
 ---
 
@@ -109,15 +111,19 @@ Clean. Remote confirmed at `github.com:hyangwoosh/GEMS-Talent-webapp`.
 
 | # | Item | Priority | Notes |
 |---|---|---|---|
-| 1 | ~~Confirm M365 subscription status~~ | ~~HIGH~~ DONE | Active, $6.30 USD/mth, 3 mailboxes confirmed |
-| 2 | Update STAMP_URL env var in Netlify | High | Change to gemstalent.com.sg domain |
-| 3 | Phase 7 monitoring | High | 24–48 hr verify post-cutover |
-| 4 | Disable Exabytes hosting auto-renew | Medium | Before 12/08/2026 |
-| 5 | Replace placeholder client/testimonial copy | Low — post-launch | data.js → clientGroups[], testimonials[] |
-| 6 | Distinct artiste portraits | Low — post-launch | Lawrence Wong + Theresa Carpio share image |
-| 7 | Real UEN | Low — post-launch | Add to data.js.contact.uen |
-| 8 | Real-device QA responsive | Low | Test on phones once PC DNS clears |
-| 9 | Exabytes full exit | When ready | See exit plan above |
+| 1 | ~~Confirm M365 subscription status~~ | DONE | Active, $6.30 USD/mth, 3 mailboxes confirmed |
+| 2 | ~~Update STAMP_URL env var in Netlify~~ | DONE | Updated to gemstalent.com.sg, redeployed |
+| 3 | ~~Phase 7 monitoring~~ | DONE | All 7 pages, contact form, function logs — all passed |
+| 4 | Phase 3 — Zoho Mail Lite setup | High — BLOCKED | Need Terence to provide M365 admin credentials before starting |
+| 5 | Phase 4 — M365 → Zoho IMAP migration | High — BLOCKED | Blocked on Phase 3 + M365 credentials |
+| 6 | Phase 5 — Staff devices reconfigured | High — BLOCKED | Blocked on Phase 4 |
+| 7 | Phase 6 — MX cutover M365 → Zoho | High — BLOCKED | Blocked on Phase 5 |
+| 8 | Phase 8 — Cancel M365 + Exabytes exit | When ready | After Phase 7 stable, saves ~$191 USD/yr |
+| 9 | Disable Exabytes hosting auto-renew | Medium | Before 12/08/2026 |
+| 10 | Replace placeholder client/testimonial copy | Low — post-launch | data.js → clientGroups[], testimonials[] |
+| 11 | Distinct artiste portraits | Low — post-launch | Lawrence Wong + Theresa Carpio share image |
+| 12 | Real UEN | Low — post-launch | Add to data.js.contact.uen |
+| 13 | Real-device QA responsive | Low | Test on phones once PC DNS clears |
 
 ---
 
