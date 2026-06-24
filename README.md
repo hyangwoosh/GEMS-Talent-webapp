@@ -33,7 +33,7 @@ Visit `http://localhost:3000` (or whatever port your server uses).
 - **Babel Standalone 7.29.0** transpiles `.jsx` files **in the browser** at page load
 - **Vanilla CSS** with custom properties (`styles.css`, `responsive.css`)
 - **One global data object** (`window.GEMS_DATA` in `data.js`) — single source of truth for all page content
-- **Form backend** — currently `api/enquiry.js` (Vercel function format). To be converted to a Netlify Function on deploy. Uses [Resend](https://resend.com) for transactional email.
+- **Form backend** — `netlify/functions/enquiry.js` (Netlify Function). Sends team notification + auto-reply via [Resend](https://resend.com). In-memory rate limiting.
 
 The stack was chosen deliberately: maximal iteration speed, zero build friction,
 serves as a flat folder of files on any host.
@@ -69,7 +69,7 @@ serves as a flat folder of files on any host.
 | `work.html` | Case studies / past projects |
 | `services.html` | Services breakdown |
 | `about.html` | About the agency |
-| `contact.html` | Contact form (POSTs to `/api/enquiry`) |
+| `contact.html` | Contact form (POSTs to `/api/enquiry` → Netlify Function) |
 | `og-card.html` | OG card renderer — type-led (1200×630) |
 | `og-card-photo.html` | OG card renderer — photo-led (1200×630) |
 | `email-preview.html` | Local renderer for email templates |
@@ -88,15 +88,15 @@ serves as a flat folder of files on any host.
 
 | File | Notes |
 |---|---|
-| `data.js` | All page content. **Single source of truth** — extend, never duplicate. Stays at repo root because every page references it. Currently uses WordPress CDN URLs for images. |
+| `data.js` | All page content. **Single source of truth** — extend, never duplicate. Stays at repo root because every page references it. Images localized to `assets/cdn/`. |
 | `styles/styles.css` | Global styles + design tokens at `:root` |
 | `styles/responsive.css` | All `@media` queries. Per-page styles must add a class targeted from here, never inline `@media` blocks. |
 
-### Backend (form endpoint) — `api/`
+### Backend (form endpoint) — `netlify/functions/`
 
 | File | Notes |
 |---|---|
-| `api/enquiry.js` | Vercel-format function. Sends team notification + auto-reply via Resend. Has rate limiting via Upstash REST. To be converted to Netlify Function on deploy. |
+| `netlify/functions/enquiry.js` | Netlify Function. Sends team notification + auto-reply via Resend. In-memory IP rate limiting (3/min, 10/hr). Honeypot + timing-based bot detection. |
 | `email-templates/team-notification.js` | Branded team notification email — sent on every enquiry |
 | `email-templates/auto-reply.js` | Branded auto-reply with brass GEMS stamp — sent to the enquirer |
 
@@ -114,6 +114,7 @@ serves as a flat folder of files on any host.
 |---|---|
 | `docs/handoff.md` | **Read first.** Rolling session log: what landed, current open items, design tokens, file map. Updated at the end of every working session. |
 | `docs/DEPLOYMENT_RUNBOOK.md` | 8-phase migration plan: WordPress → Netlify + Zoho. Acceptance criteria, decision rationale, rollback. For Claude Code. |
+| `docs/USER_MIGRATION_GUIDE.md` | The human-facing companion to the runbook. What the user clicks/decides at each phase, with timing. Organized into 3 Claude Code sessions. |
 | `docs/DECISIONS.md` | 12 architectural decision records (ADRs). Locked decisions w/ reasoning. Don't re-litigate without raising it. |
 | `docs/ZOHO_TEAM_SETUP.md` | One-pager for the 4 staff members. Email-client setup for iOS, Android, macOS, Outlook, Thunderbird. |
 | `docs/redirects.md` | WordPress URL → React URL map. Contains the Netlify `_redirects` block to drop at repo root pre-deploy. |
@@ -161,8 +162,9 @@ of the current `docs/handoff.md`.
 ## Deploy
 
 Deploy target: **Netlify** (free tier, commercial use allowed).
-Email hosting: **Zoho Mail** (free tier, up to 5 users).
-Domain: `gemstalent.com.sg` (Exabytes registrar).
+Email hosting: **Zoho Mail Free** (up to 5 users).
+DNS: **Cloudflare** (free plan, DNS only mode).
+Domain: `gemstalent.com.sg` (registered at Exabytes, pending transfer to Cloudflare).
 
 See `docs/DEPLOYMENT_RUNBOOK.md` for the full 8-phase migration plan with
 acceptance criteria per phase. See `docs/handoff.md` for current session
