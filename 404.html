@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Page not found — GEMS Talent</title>
+
+  <meta name="robots" content="noindex" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="/assets/gems-stamp-nav.jpg" />
+  <link rel="apple-touch-icon" href="/assets/gems-stamp-nav.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" />
+
+  <style>
+    :root {
+      --mist: #E6ECF2;
+      --cobalt: #0D3FA0;
+      --cobalt-deep: #062870;
+      --brass: #C9A961;
+      --ink: #0E1A2B;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100vh;
+      height: 100dvh;
+    }
+    body {
+      background: var(--mist);
+      color: var(--ink);
+      font-family: "Inter Tight", system-ui, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+    }
+    .card { max-width: 520px; }
+    .eyebrow {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--cobalt);
+      margin-bottom: 20px;
+    }
+    .eyebrow::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--brass);
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+    h1 {
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      margin-bottom: 16px;
+    }
+    p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: rgba(14, 26, 43, 0.72);
+      margin-bottom: 28px;
+    }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--cobalt);
+      text-decoration: none;
+      border-bottom: 1px solid var(--cobalt);
+      padding-bottom: 2px;
+    }
+    .cta:hover { color: var(--cobalt-deep); border-color: var(--cobalt-deep); }
+    .cta svg { width: 16px; height: 16px; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="eyebrow">404 — Not found</div>
+    <h1>This page isn't on the bill.</h1>
+    <p>The address may have changed, or the link is out of date. Everything current lives on the homepage.</p>
+    <a class="cta" href="/">
+      Back to home
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </a>
+  </main>
+</body>
+</html>

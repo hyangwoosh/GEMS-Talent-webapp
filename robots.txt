@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /og-card.html
+Disallow: /og-card-photo.html
+Disallow: /email-preview.html
+Disallow: /wordpress/
+
+Sitemap: https://gemstalent.com.sg/sitemap.xml

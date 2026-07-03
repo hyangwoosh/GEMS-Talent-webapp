@@ -1,4 +1,4 @@
-# GEMS Talent — Session handoff (June 2026, session 12)
+# GEMS Talent — Session handoff (July 2026, session 13)
 Singapore talent agency · Desktop-first editorial prototype · React 18 + Babel CDN · Inline JSX
 
 ---
@@ -26,11 +26,25 @@ Singapore talent agency · Desktop-first editorial prototype · React 18 + Babel
 - Nameservers: `kanye.ns.cloudflare.com`, `romina.ns.cloudflare.com`
 - Old nameservers (rollback): `ns135.sgcloudhosting.cloud`, `ns136.sgcloudhosting.cloud`
 
-**Exabytes:** active, next due 12/08/2026, billing SGD 626.60 triennially (cPanel 13 Plus). Domain registered through Exabytes. Hosting no longer needed. Domain goes to paid renewal rate when hosting cancelled. `.com.sg` TLD not transferable to Cloudflare Registrar.
+**Exabytes:** hosting CANCELLED (session 13). Domain registration stays at Exabytes — registrar decision made, no transfer to Vodien. Domain expires 12/08/2026, renews at paid rate. `.com.sg` TLD not transferable to Cloudflare Registrar.
 
 ---
 
-## What landed this session (session 12)
+## What landed this session (session 13)
+
+### Exabytes exit complete ✓
+- Hosting cancelled (user emailed billing). Domain stays at Exabytes — registrar decision final.
+- Post-cancellation DNS verification: all records intact on Cloudflare (NS, A, www CNAME, Zoho MX/SPF/DKIM/DMARC, Resend send subdomain MX/SPF, Zoho verify TXT). Apex + www serve 200 via Netlify. Extensionless URLs resolve.
+
+### SEO + hardening (no-content-needed polish) ✓
+- `sitemap.xml` — 7 canonical extensionless URLs.
+- `robots.txt` — sitemap ref; disallows og-card/og-card-photo/email-preview + /wordpress/.
+- `404.html` — branded static page (palette tokens, eyebrow rail, ArrowRight CTA, noindex). Netlify picks it up automatically from publish root.
+- `netlify.toml` — security headers for all paths: X-Frame-Options DENY, X-Content-Type-Options nosniff, Referrer-Policy strict-origin-when-cross-origin, Permissions-Policy (camera/mic/geo off). CSP deliberately skipped — Babel-in-browser needs inline/eval, strict CSP would break the site.
+
+---
+
+## What landed in session 12
 
 ### Cloudflare DNS setup ✓
 - Domain `gemstalent.com.sg` added to Cloudflare (free plan).
@@ -76,32 +90,21 @@ Singapore talent agency · Desktop-first editorial prototype · React 18 + Babel
 
 ## First things to do next session
 
-1. **Cancel Exabytes hosting** — email `billing@exabytes.sg` from billing account primary email requesting cPanel 13 Plus cancellation. Domain stays, goes to paid renewal rate.
+1. **Content polish** (needs input from user) — replace placeholder client/testimonial copy, get distinct artiste portraits, add real UEN to `data.js`.
 
-2. **Compare domain renewal pricing** — check Exabytes `.com.sg` domain-only renewal rate vs Vodien (~SGD 56/yr for 2yr). Transfer to Vodien if Exabytes is significantly more expensive (EPP code already obtained).
+2. **Verify deployed polish** — after Netlify deploy: `robots.txt` + `sitemap.xml` serve 200, broken URL shows branded 404, response headers include X-Frame-Options. Optionally submit sitemap in Google Search Console.
 
-3. **Content polish** — replace placeholder client/testimonial copy, get distinct artiste portraits, add real UEN to `data.js`.
+3. **Domain renewal reminder** — Exabytes invoice due 12/08/2026 (domain only now).
 
 ---
 
-## Exabytes exit plan
+## Exabytes exit plan — COMPLETE
 
-**Current status:** DNS on Cloudflare (active). Email on Zoho (active). Hosting unused. Domain registration still at Exabytes.
-
-**Completed:**
 1. ~~Migrate email~~ ✓ — Zoho Mail Free
 2. ~~Move DNS to Cloudflare~~ ✓ — active and verified
 3. ~~M365 cancellation~~ ✓ — set to cancel on renewal
-
-**Remaining:**
-4. **Cancel hosting** — email `billing@exabytes.sg` from primary billing email. Domain goes to paid renewal.
-5. **Decide domain registrar** — stay at Exabytes (check renewal price) or transfer to Vodien (~SGD 56/yr). EPP code already obtained. Cloudflare Registrar does NOT support `.com.sg`.
-
-**Key facts:**
-- Domain expires 12/08/2026
-- Hosting SGD 626.60/3yr — completely unused (site=Netlify, email=Zoho, DNS=Cloudflare)
-- `.com.sg` not transferable to Cloudflare — only Exabytes, Vodien, Gandi etc.
-- Vodien: SGD 112.12/2yr (~SGD 56/yr)
+4. ~~Cancel hosting~~ ✓ — cancelled session 13
+5. ~~Domain registrar decision~~ ✓ — stays at Exabytes (renewal due 12/08/2026)
 
 ---
 
@@ -109,14 +112,15 @@ Singapore talent agency · Desktop-first editorial prototype · React 18 + Babel
 
 | # | Item | Priority | Notes |
 |---|---|---|---|
-| 1 | ~~Cloudflare activation~~ | DONE | Active and verified — site, email, form all working |
-| 2 | Cancel Exabytes hosting | Medium | Email `billing@exabytes.sg` from primary billing email |
-| 3 | Decide domain registrar | Medium | Check Exabytes domain-only price vs Vodien SGD 56/yr. EPP code obtained. |
-| 4 | Cancel M365 | Done — pending | Set to cancel on renewal, no action needed |
-| 5 | Replace placeholder client/testimonial copy | Low — post-launch | data.js → clientGroups[], testimonials[] |
-| 6 | Distinct artiste portraits | Low — post-launch | Lawrence Wong + Theresa Carpio share image |
-| 7 | Real UEN | Low — post-launch | Add to data.js.contact.uen |
+| 1 | ~~Cancel Exabytes hosting~~ | DONE | Cancelled session 13 |
+| 2 | ~~Domain registrar decision~~ | DONE | Stays at Exabytes, renews 12/08/2026 |
+| 3 | Cancel M365 | Done — pending | Set to cancel on renewal, no action needed |
+| 4 | Replace placeholder client/testimonial copy | Medium — needs user input | data.js → clientGroups[], testimonials[] |
+| 5 | Distinct artiste portraits | Medium — needs user input | Lawrence Wong + Theresa Carpio share image |
+| 6 | Real UEN | Medium — needs user input | Add to data.js.contact.uen |
+| 7 | Verify deployed SEO/404/headers | Low | After next deploy — see "First things" §2 |
 | 8 | Real-device QA responsive | Low | Test on phones |
+| 9 | Google Search Console + sitemap submit | Low | Optional discoverability boost |
 
 ---
 
@@ -125,15 +129,14 @@ Singapore talent agency · Desktop-first editorial prototype · React 18 + Babel
 | Service | Provider | Plan | Cost | Status |
 |---|---|---|---|---|
 | Web hosting | Netlify | Free | $0 | Active |
-| DNS | Cloudflare | Free | $0 | Pending activation |
+| DNS | Cloudflare | Free | $0 | Active |
 | Email (mailboxes) | Zoho Mail | Free (5 users) | $0 | Active |
 | Transactional email | Resend | Free tier | $0 | Active |
-| Domain registration | Exabytes | — | Included in hosting | Active, expires 12/08/2026 |
-| Old hosting | Exabytes | cPanel 13 Plus | SGD 626.60/3yr | Active — to cancel |
+| Domain registration | Exabytes | Domain only | Paid renewal, due 12/08/2026 | Active |
+| Old hosting | Exabytes | cPanel 13 Plus | — | CANCELLED |
 | Old email | Microsoft 365 | Business Basic | ~$6.30 USD/mo | Cancelling on renewal |
-| Alt registrar | Vodien | Domain only | SGD 56/yr | Option if Exabytes too expensive |
 
-**Monthly cost after full exit:** $0 (until domain renewal)
+**Monthly cost:** $0 (domain renewal annually)
 
 ---
 
@@ -145,12 +148,15 @@ Singapore talent agency · Desktop-first editorial prototype · React 18 + Babel
 ├── README.md
 ├── CLAUDE.md
 ├── data.js                      CDN → assets/cdn (local, 32 images)
-├── netlify.toml                 Build config + /api/enquiry redirect
+├── netlify.toml                 Build config + /api/enquiry redirect + security headers
 ├── _redirects                   WP → React URL map (17 rules)
+├── sitemap.xml                  7 canonical URLs
+├── robots.txt                   Sitemap ref + utility-page disallows
 │
 ├── index.html · artistes.html · clients.html · work.html
 ├── services.html · about.html · contact.html
 ├── og-card.html · og-card-photo.html · email-preview.html
+├── 404.html                     Branded static 404 (Netlify auto-serves)
 │
 ├── components/
 │   ├── hero.jsx · nav.jsx · sections.jsx
