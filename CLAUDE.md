@@ -1,70 +1,106 @@
 # GEMS Talent — project context
 
-Singapore talent agency website · desktop-first editorial prototype.
-React 18 + Babel CDN with inline JSX · zero build step · serves as static HTML.
+Singapore talent agency website. **Mid-rebuild:** the live site is the legacy
+React-via-Babel-CDN build at repo root; the replacement is an Astro 7 app in
+`site/`. Both live in this repo until cutover.
 
 ## Read first, every session
 
-**`docs/handoff.md`** is the rolling session log — what landed, current
-file map, open items, design tokens. **Read it at the start of every chat**
-before touching anything. Each session ends by rewriting it.
+1. **`docs/handoff.md`** — rolling session log: what landed, current file map,
+   open items. Read it before touching anything. Each session ends by rewriting it.
+2. **`docs/DECISIONS.md`** — 16 ADRs. The rebuild amendments are at the bottom
+   under "Rebuild amendments — August 2026". Don't re-argue settled decisions;
+   follow the amendment protocol at the end of that file if one genuinely needs
+   revisiting.
 
-`uploads/` contains earlier handoffs and the WordPress XML export — read-only
-historical reference, not active project files.
+`uploads/` is read-only historical reference (WordPress XML export, earlier
+handoffs) — not active project files.
 
-## Project layout
+## Two trees, one repo
 
 ```
-/                      ← HTML pages live at repo root (URL-driven)
-  *.html               index, artistes, clients, work, services, about,
-                       contact, og-card, og-card-photo, email-preview
-  data.js              ALL page content (single source of truth)
-  README.md            GitHub repo intro
-  CLAUDE.md            THIS FILE — project context
-  .gitignore
+/                    LEGACY — the currently live site
+  *.html             12 pages, React 18 UMD + @babel/standalone, no build
+  data.js            window.GEMS_DATA — all legacy content
+  components/*.jsx   hero · nav · sections · page-header · tweaks-panel
+  styles/*.css       styles.css · responsive.css
+  netlify/functions/ enquiry.js — the live form endpoint
+  netlify.toml       publish "." + /api/enquiry redirect + security headers
+  _redirects         17 WordPress → React URL rules (SEO, do not lose)
+  404.html · sitemap.xml · robots.txt
 
-components/            All React .jsx components
-  hero.jsx · nav.jsx · sections.jsx · page-header.jsx · tweaks-panel.jsx
+site/                REBUILD — Astro 7 + TypeScript
+  src/content/       artistes · events · services · clients · updates (MDX/JSON)
+  src/content.config.ts   Zod schemas — the contract
+  src/layouts/ · src/pages/ · src/components/
+  src/assets/        images, processed by Astro's pipeline
+  public/admin/      Sveltia CMS (optional, deferred)
 
-styles/                Global CSS
-  styles.css · responsive.css
-
-docs/                  Project documentation
-  handoff.md           Rolling session log — read first
-  EMAIL_SETUP.md       Resend / Netlify Function env vars + verification
-
-api/                   Form endpoint (Vercel format; converts to
-                       netlify/functions/ during deploy)
-  enquiry.js
-
-email-templates/       Branded email HTML (used by api/enquiry.js)
-  team-notification.js · auto-reply.js
-
-scripts/               One-shot tooling
-  download-cdn-images.mjs · build-og-card-photo.mjs · *.recipe.js
-
-assets/                Site images (stamps, OG cards, + future cdn/)
-uploads/               Historical reference (WP export, earlier handoffs)
+docs/                handoff.md · DECISIONS.md · DEPLOYMENT_RUNBOOK.md
+                     EMAIL_SETUP.md · redirects.md · ZOHO_TEAM_SETUP.md
+                     USER_MIGRATION_GUIDE.md · CLAUDE_CODE_START.md
+email-templates/     team-notification.js · auto-reply.js
+scripts/             one-shot tooling incl. the data.js → collections migration
+assets/cdn/          32 localized images (legacy paths)
 ```
 
-HTML pages reference components and styles via subdirectory paths:
-`<script src="components/sections.jsx">`, `<link href="styles/styles.css">`.
-`data.js` stays at root because it's the single content source referenced
-by every page.
+**Never delete or edit legacy files to make the rebuild work.** Root keeps
+deploying to Netlify and serving real traffic until cutover.
+
+## Stack
+
+| Layer | Choice |
+|---|---|
+| Framework | Astro 7 + TypeScript strict, static output |
+| Content | Zod-validated content collections, one file per record |
+| Interactive | React islands only where needed (nav, gallery, form) |
+| Hosting | Cloudflare Workers (**after cutover** — Netlify serves it today) |
+| DNS | Cloudflare, DNS-only mode |
+| Registrar | Exabytes — locked, `.com.sg` can't transfer |
+| Enquiry store | Zoho CRM Free |
+| Team alerts | Telegram bot |
+| Auto-reply | Resend |
+| Mailboxes | Zoho Mail, 3 accounts |
+| Analytics | Cloudflare Web Analytics |
+| Bot protection | Cloudflare Turnstile |
+| Editing UI | Sveltia CMS — optional, deferred |
 
 ## Single sources of truth (do not duplicate)
 
-| Concern | Lives in | Notes |
-|---|---|---|
-| All page content (roster, services, clients, copy, contact info) | `data.js` | One `window.GEMS_DATA` object. Extend, never duplicate. |
-| Global styles + tokens | `styles/styles.css` | CSS custom properties at `:root`. |
-| Mobile/tablet responsive treatment | `styles/responsive.css` | Never sprinkle `@media` into per-page `<style>` tags — add a class, target it from here. |
-| Email infrastructure | `api/enquiry.js` + `email-templates/` + `docs/EMAIL_SETUP.md` | Resend for delivery, Upstash REST for rate limit (fail-open to in-memory). |
-| Design system + open items + session log | `docs/handoff.md` | THE roadmap. |
+| Concern | Lives in |
+|---|---|
+| Rebuild content | `site/src/content/**` — schemas in `site/src/content.config.ts` |
+| Legacy content | `data.js` (frozen — migrate from it, don't extend it) |
+| Design tokens | `site/src/styles/tokens.css`, ported from `styles/styles.css` |
+| Enquiry pipeline | `site/src/pages/api/enquiry.ts` + `email-templates/` |
+| Decisions | `docs/DECISIONS.md` |
+| Session log + open items | `docs/handoff.md` |
 
-When asking "where does X come from" the answer should be **one** file.
+## Content model
+
+Five collections. The relationships are the point — the legacy `data.js` used
+plain strings as foreign keys with nothing validating them.
+
+- **`artistes`** — name, nameZh, disciplines, languages, portrait, gallery,
+  showreel, instagram, structured `credits[]`
+- **`events`** — title, venue, **date**, client ref, **`artistes[]` refs**,
+  roles, hero, gallery, `featured` flag
+- **`clients`** — name, group, engagement, **`verified` (default `false`)**
+- **`services`**, **`updates`**
+
+Three rules:
+
+1. **`artistes` ↔ `events` is many-to-many**, via `reference()` both ways. A
+   broken reference fails the build.
+2. **`featured: true` on an event** drives the homepage rotator. There is no
+   separate featured list — that duplication is what the rebuild removes.
+3. **`verified: false` clients never render.** Names must be confirmed as real
+   engagements before they appear. This is enforced by the build, not by
+   remembering.
 
 ## Locked design system (do not invent variants)
+
+Unchanged from the legacy site. Port it; don't redesign it.
 
 **Palette — Cool Mist + Cobalt-Led**
 - Mist `#E6ECF2` · Cobalt `#0D3FA0` · Cobalt-deep `#062870` · Cobalt-soft `#2A5DC4`
@@ -74,57 +110,60 @@ When asking "where does X come from" the answer should be **one** file.
 - Color **adds** to the palette, never replaces. No dark blue as dominant bg.
 - Section rhythm via alternating tinted backgrounds — never gradients-for-decoration.
 
-**Type** — Inter Tight (sans 400/500/600). Newsreader italic reserved
-strictly for show/concert title citations (`<span className="serif-em">`).
-JetBrains Mono for eyebrow rails + numerals. No decorative italic.
+**Type** — Inter Tight (sans 400/500/600). Newsreader italic reserved strictly
+for show/concert title citations (`.serif-em`). JetBrains Mono for eyebrow rails
++ numerals. No decorative italic.
 
 **Eyebrow rail** — 11px, tracked `+0.16em`, uppercase, brass dot prefix.
 
-**Mobile breakpoints** — 1100 / 900 / 600. Hamburger appears at ≤900px.
-Sec-rail un-sticks at ≤1100px. Touch tap targets ≥44px under `hover: none`.
+**Breakpoints** — 1100 / 900 / 600. Hamburger ≤900px. Sec-rail un-sticks
+≤1100px. Tap targets ≥44px under `hover: none`.
 
-**Viewport units** — never bare `100vh`. Always write `100vh` first as
-fallback, then `100dvh` (fill) or `100svh` (ceiling) on the next line.
-Cross-platform issue (iOS Safari, Android Chrome, ChromeOS keyboards), not
-iOS-specific.
+**Viewport units** — never bare `100vh`. Write `100vh` first as fallback, then
+`100dvh` (fill) or `100svh` (ceiling). Cross-platform, not iOS-specific.
 
 **Iconography** — `lucide-react`-style outline icons inline, 1.5px stroke.
 ArrowRight is the canonical CTA glyph. No emoji.
 
-**Tweaks** — `useTweaks(defaults)` pattern with `/*EDITMODE-BEGIN*/{...}/*EDITMODE-END*/`
-JSON blocks so changes persist to disk.
+## Enquiry pipeline
 
-## Pages (all 7 wired and functional)
+`POST /api/enquiry` fans out with `Promise.allSettled` — never `all`:
 
-`index.html` (homepage) · `artistes.html` · `clients.html` · `work.html` ·
-`services.html` · `about.html` · `contact.html`
+1. **Zoho CRM** — the lead record, source of truth
+2. **Telegram** — instant team alert
+3. **Resend** — branded auto-reply to the enquirer
 
-Plus `og-card.html` (type-led) and `og-card-photo.html` (photo-led) — reference HTML
-that builds `/assets/og-card*.png` for social previews.
+Return 200 if the store succeeded, even if email didn't. The legacy function
+returns 502 on a Resend failure and **loses the enquiry entirely** — no retry,
+no queue, no record. That is the defect being fixed.
+
+Constraints:
+
+- Zoho CRM Free has **no custom fields**. Map only to standard Lead fields:
+  `Last_Name`, `First_Name`, `Email`, `Phone`, `Company`, `Description`,
+  `Lead_Source`.
+- `Lead_Source` is a picklist and **`"Website"` is not a valid value** — add it
+  to the picklist or use an existing entry.
+- The Zoho org is on an Enterprise trial until **12 September 2026**, then
+  downgrades to Free. Don't build on trial-only features.
+- Zoho API URLs are datacentre-specific (`.com` / `.eu` / `.in` / `.com.au`).
+  Wrong DC returns 401 with no explanation.
+
+Carry forward from the legacy function: honeypot field, minimum fill-time check,
+HTML-escaping of every input, 5000-char cap, and **soft-reject spam with 200 OK**.
 
 ## Operational principles
 
 - **Hard placeholders are a trust-killer.** No `XXX`/`lorem` filler — auto-suppress
-  over fake values. Visible-as-placeholder UI (labelled crosshairs, etc.) is fine.
-- **Fail-open on infra.** Upstash blip → in-memory fallback. Better to drop a
-  rate-limit guarantee than lock out a real client.
-- **Soft-reject spam** (200 OK to bots) over hard-reject — hard-reject trains them
-  to retry.
+  over fake values. The live site currently publishes unverified client names;
+  the `verified` flag exists so the rebuild cannot repeat that.
+- **Fail-open on infra.** A dropped guarantee beats locking out a real client.
+- **Soft-reject spam** (200 OK to bots) — hard-reject trains them to retry.
 - **Honor the existing voice.** Editorial, restrained, sentence-case CTAs.
   No marketing breathlessness.
-
-## Image hosting status
-
-`data.js` currently references the live WordPress CDN at
-`https://gemstalent.com.sg/wordpress/wp-content/uploads/...` via a `const CDN`
-prefix + template literals. To localize:
-
-    node scripts/download-cdn-images.mjs --rewrite-data
-
-One command downloads all 17 images into `/assets/cdn/` AND rewrites `data.js`
-to point at local paths. Sandbox can't reach external HTTP, so run locally.
+- **Don't break the live site.** Every rebuild change is additive under `site/`
+  until cutover.
 
 ## Quick "what's open" pointer
 
-See `docs/handoff.md` § "Open items for the next session". Anything not in
-that table is either done or out of scope.
+`docs/handoff.md` § open items. Anything not there is done or out of scope.
