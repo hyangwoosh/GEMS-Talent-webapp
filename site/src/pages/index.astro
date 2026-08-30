@@ -1,5 +1,113 @@
 ---
-// Placeholder — replaced once layouts and collections are populated.
+/**
+ * Scaffold smoke test — not a design.
+ *
+ * This exists to prove the content model end to end: that collections load,
+ * that artistes <-> events resolves in BOTH directions from one set of
+ * references, and that unverified clients are excluded. It is replaced by the
+ * real homepage once a design direction is picked.
+ */
+import { getCollection, getEntry } from 'astro:content';
+
+const artistes = (await getCollection('artistes', ({ data }) => !data.draft))
+  .sort((a, b) => a.data.order - b.data.order);
+
+const events = (await getCollection('events', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// events -> artistes: resolve each reference to the real entry
+const eventsWithArtistes = await Promise.all(
+  events.map(async (e) => ({
+    event: e,
+    artistes: await Promise.all(e.data.artistes.map((ref) => getEntry(ref))),
+  })),
+);
+
+// artistes -> events: the same references, read the other way. Nothing
+// hand-maintained — this is what data.js's single relatedWork string could
+// not express.
+const appearances = new Map<string, typeof events>();
+for (const e of events) {
+  for (const ref of e.data.artistes) {
+    const list = appearances.get(ref.id) ?? [];
+    list.push(e);
+    appearances.set(ref.id, list);
+  }
+}
+
+const allClients = await getCollection('clients');
+const verifiedClients = allClients.filter((c) => c.data.verified);
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 ---
-<html lang="en"><head><meta charset="utf-8" /><title>GEMS Talent</title></head>
-<body><h1>GEMS Talent — rebuild scaffold</h1></body></html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GEMS Talent — content model smoke test</title>
+    <style>
+      body { font: 15px/1.6 ui-sans-serif, system-ui, sans-serif; margin: 0; padding: 40px;
+             background: #E6ECF2; color: #0E1A2B; max-width: 900px; }
+      h1 { font-size: 24px; margin: 0 0 4px; }
+      h2 { font-size: 15px; text-transform: uppercase; letter-spacing: .12em;
+           margin: 34px 0 10px; color: #33455C; }
+      .note { color: #5A6B80; font-size: 13px; margin: 0 0 8px; }
+      ul { margin: 0; padding-left: 20px; }
+      li { margin-bottom: 5px; }
+      code { background: #D8E1ED; padding: 1px 5px; font-size: 13px; }
+      .ok { color: #1B6B52; font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <h1>Content model smoke test</h1>
+    <p class="note">Scaffold only. Proves the collections and their relationships resolve.</p>
+
+    <h2>Artistes → their events</h2>
+    <ul>
+      {artistes.map((a) => (
+        <li>
+          <strong>{a.data.name}</strong> — {a.data.tag}
+          {' · '}{a.data.disciplines.join(', ')}
+          {' · '}{a.data.credits.length} credits
+          {' · '}{a.data.gallery.length} gallery images
+          <br />
+          <small>
+            appears in:{' '}
+            {(appearances.get(a.id) ?? []).map((e) => e.data.title).join(', ') || '—'}
+          </small>
+        </li>
+      ))}
+    </ul>
+
+    <h2>Events → their artistes</h2>
+    <ul>
+      {eventsWithArtistes.map(({ event, artistes: cast }) => (
+        <li>
+          <strong>{event.data.title}</strong> — {event.data.venue},{' '}
+          {event.data.date.getFullYear()}
+          {event.data.featured && <span class="ok"> · featured</span>}
+          <br />
+          <small>cast: {cast.map((c) => c?.data.name ?? '⚠ unresolved').join(', ')}</small>
+        </li>
+      ))}
+    </ul>
+
+    <h2>Services</h2>
+    <ul>
+      {services.map((s) => (
+        <li>{s.data.title} — {s.data.deliverables.length} deliverables</li>
+      ))}
+    </ul>
+
+    <h2>Clients</h2>
+    <p class="note">
+      <code>{allClients.length}</code> in the repo,
+      <code>{verifiedClients.length}</code> verified and therefore renderable.
+      Unverified names never reach a page.
+    </p>
+    <ul>
+      {verifiedClients.map((c) => <li>{c.data.name}</li>)}
+      {verifiedClients.length === 0 && <li class="note">None confirmed yet — nothing rendered.</li>}
+    </ul>
+  </body>
+</html>
