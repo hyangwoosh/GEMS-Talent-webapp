@@ -1,110 +1,75 @@
-# GEMS Talent — Session handoff (July 2026, session 13)
-Singapore talent agency · Desktop-first editorial prototype · React 18 + Babel CDN · Inline JSX
+# GEMS Talent — Session handoff (August 2026, session 14)
+
+Singapore talent agency · **mid-rebuild** · legacy React site live at root, Astro 7 rebuild in `site/`
 
 ---
 
 ## State of the world right now
 
-**Site is LIVE at `https://gemstalent.com.sg`** — React site on Netlify.
-- Netlify hosting, auto-deploys from GitHub `main`.
-- SSL cert provisioned. All 7 pages load, talent portraits render, contact form works end-to-end.
-- DNS managed by **Cloudflare** (free plan) — active and verified.
+**Live site: `https://gemstalent.com.sg`** — unchanged, still the legacy React-via-Babel-CDN
+build at repo root, still deploying to Netlify from `main`. **Nothing about the live site
+changed this session.**
 
-**Email is on Zoho Mail Free** — migrated from Microsoft 365.
-- 3 mailboxes: `christina@`, `marketing@`, `terence.tan@gemstalent.com.sg`
-- MX → `mx.zoho.com` / `mx2.zoho.com` / `mx3.zoho.com`
-- SPF → `v=spf1 include:zohomail.com ~all`
-- DKIM → `zmail._domainkey` configured
-- DMARC → `v=DMARC1; p=none;`
-- Zoho verification TXT in place.
+**Rebuild: in progress on `claude/repo-assessment-greenfield-v5d5d3`**, open as
+[draft PR #1](https://github.com/hyangwoosh/GEMS-Talent-webapp/pull/1). Two commits, CI green.
 
-**Microsoft 365** — set to cancel on renewal. Zoho handling all mail now.
-
-**Resend transactional email** — working. `send.gemstalent.com.sg` subdomain configured (MX + SPF + DKIM for Resend/SES).
-
-**Cloudflare DNS** — active. Nameservers changed and verified.
-- Nameservers: `kanye.ns.cloudflare.com`, `romina.ns.cloudflare.com`
-- Old nameservers (rollback): `ns135.sgcloudhosting.cloud`, `ns136.sgcloudhosting.cloud`
-
-**Exabytes:** hosting CANCELLED (session 13). Domain registration stays at Exabytes — registrar decision made, no transfer to Vodien. Domain expires 12/08/2026, renews at paid rate. `.com.sg` TLD not transferable to Cloudflare Registrar.
+**Why the rebuild:** a competitive review of nine Singapore and regional agencies found
+every one of them has indexable per-artiste pages. GEMS has anchors on a single page, so
+there is no surface for anyone searching an artiste by name. The cause is structural —
+content is stored as presentation, so pages cannot be generated from it.
 
 ---
 
-## What landed this session (session 13)
+## What landed this session (session 14)
 
-### Exabytes exit complete ✓
-- Hosting cancelled (user emailed billing). Domain stays at Exabytes — registrar decision final.
-- Post-cancellation DNS verification: all records intact on Cloudflare (NS, A, www CNAME, Zoho MX/SPF/DKIM/DMARC, Resend send subdomain MX/SPF, Zoho verify TXT). Apex + www serve 200 via Netlify. Extensionless URLs resolve.
+### Repo assessment + competitive review ✓
+Nine agencies scraped and analysed: FLY Entertainment, NoonTalk, TCP Media, Artiste Co,
+Hello Group, Haute, JRM Group, Scarlett, plus MN2S/UTA as booking-UX benchmarks.
+Written up as an artifact (link in the session log; not committed).
 
-### SEO + hardening (no-content-needed polish) ✓
-- `sitemap.xml` — 7 canonical extensionless URLs.
-- `robots.txt` — sitemap ref; disallows og-card/og-card-photo/email-preview + /wordpress/.
-- `404.html` — branded static page (palette tokens, eyebrow rail, ArrowRight CTA, noindex). Netlify picks it up automatically from publish root.
-- `netlify.toml` — security headers for all paths: X-Frame-Options DENY, X-Content-Type-Options nosniff, Referrer-Policy strict-origin-when-cross-origin, Permissions-Policy (camera/mic/geo off). CSP deliberately skipped — Babel-in-browser needs inline/eval, strict CSP would break the site.
+Key gaps found: no per-artiste URLs, no client-attributed case studies, no awards or
+credibility marks, no updates feed, no talent-recruitment path, no artiste socials, no
+video, unoptimised imagery (a competitor on Wix serves AVIF; we ship 13 MB of raw JPEG),
+no Chinese names, abstract service copy.
 
----
+Worth protecting: the design is genuinely better than most of the field; credits are
+structured rather than comma-strings; the enquiry endpoint already accepts an artiste tag
+(built, untested in production, unused).
 
-## What landed in session 12
+### Stack decided and recorded ✓
+`docs/DECISIONS.md` gained a "Rebuild amendments — August 2026" section. ADR-001, 002 and
+013 superseded; 004, 005 and 010 amended; ADR-015 (Sveltia CMS) and ADR-016 (analytics)
+added. Original reasoning preserved per the amendment protocol.
 
-### Cloudflare DNS setup ✓
-- Domain `gemstalent.com.sg` added to Cloudflare (free plan).
-- DNS records auto-imported and cross-checked against Exabytes cPanel.
-- Cleaned up 11 junk records (7 cPanel A records, autodiscover CNAME, 3 obsolete TXT records).
-- Remaining records set to **DNS only** (no Cloudflare proxy — Netlify handles SSL/CDN).
-- Nameservers changed at Exabytes → Cloudflare. Activated and verified.
+### `CLAUDE.md` rewritten ✓
+Three claims in it were wrong and would have misled the rebuild: an `api/` directory in
+Vercel format (the function is at `netlify/functions/enquiry.js`), Upstash rate limiting
+(dropped per ADR-005), and images still on the WordPress CDN (localised long ago).
 
-### Post-activation verification ✓
-- Site loads on `gemstalent.com.sg`.
-- Contact form sends enquiry + auto-reply emails.
-- Zoho email receive + reply working.
+### Astro scaffold ✓
+`site/` — Astro 7.2.9, React 19, TypeScript strict. Scaffolded by hand; `create-astro`
+cannot fetch its template from this environment. Build passes.
 
-### Security audit of contact form ✓
-- Reviewed `netlify/functions/enquiry.js` and `contact.html`.
-- All inputs HTML-escaped server-side (XSS prevention).
-- Email regex validation, required field checks, message length cap (5000 chars).
-- Honeypot field + timing-based bot detection + IP rate limiting (3/min, 10/hr).
-- No database, no auth, no file uploads — minimal attack surface.
+### Content model + migration ✓
+`site/src/content.config.ts` defines five collections. `scripts/migrate-data-to-collections.mjs`
+converted `data.js` into **4 artistes, 3 events, 18 clients, 4 services**.
 
----
+The events count is the substance. `data.js` held the same engagements three times —
+`featured[]` (5 display rows), hardcoded JSX in `work.html` (3 sections), and 3 gallery
+arrays — with nothing keeping them in sync. Two featured rows were alternate crops of
+engagements already listed. They now exist once each.
 
-## What landed in prior sessions (10–11, including crashed session)
+`artistes ↔ events` is a real many-to-many via `reference()`, resolving in both directions
+from one set of links. Verified in the built output: every reference resolves.
 
-### Zoho Mail Free setup ✓ (was Phase 3)
-- Zoho Mail Free tier accepted for `gemstalent.com.sg` (grandfathered/region exception — docs said unavailable in SG).
-- Domain verified in Zoho. 3 mailboxes created: `christina@`, `marketing@`, `terence.tan@`.
-- MX, SPF, DKIM, DMARC records all configured at Exabytes DNS (now mirrored in Cloudflare).
+### Design directions drafted ✓
+Three whole-site directions on the locked palette, using real roster photography:
+**A Broadsheet** (Bodoni Moda), **B Stage** (Big Shoulders, cobalt-deep, image-forward),
+**C Index** (Instrument Sans, systematic). **Awaiting a decision — this blocks page templates.**
 
-### M365 cancellation initiated ✓ (was Phase 8 prereq)
-- M365 set to cancel on renewal via mobile. Will stop at end of current billing period.
-- No disruption — Zoho already handling all mail delivery.
-
-### STAMP_URL env var updated ✓ (was open item #2)
-- Changed from `gemstalent.netlify.app` to `gemstalent.com.sg` in Netlify dashboard. Redeployed.
-
-### Phase 7 monitoring passed ✓
-- All 7 pages load on production domain.
-- Contact form tested on `gemstalent.com.sg/contact`.
-- Netlify function logs clean.
-
----
-
-## First things to do next session
-
-1. **Content polish** (needs input from user) — replace placeholder client/testimonial copy, get distinct artiste portraits, add real UEN to `data.js`.
-
-2. **Verify deployed polish** — after Netlify deploy: `robots.txt` + `sitemap.xml` serve 200, broken URL shows branded 404, response headers include X-Frame-Options. Optionally submit sitemap in Google Search Console.
-
-3. **Domain renewal reminder** — Exabytes invoice due 12/08/2026 (domain only now).
-
----
-
-## Exabytes exit plan — COMPLETE
-
-1. ~~Migrate email~~ ✓ — Zoho Mail Free
-2. ~~Move DNS to Cloudflare~~ ✓ — active and verified
-3. ~~M365 cancellation~~ ✓ — set to cancel on renewal
-4. ~~Cancel hosting~~ ✓ — cancelled session 13
-5. ~~Domain registrar decision~~ ✓ — stays at Exabytes (renewal due 12/08/2026)
+### Infrastructure provisioned ✓
+Zoho CRM enabled (Enterprise trial), Telegram bot working, `sveltia-cms-auth` Worker
+deployed to Cloudflare, `workers.dev` subdomain claimed as `gemstalent`.
 
 ---
 
@@ -112,15 +77,32 @@ Singapore talent agency · Desktop-first editorial prototype · React 18 + Babel
 
 | # | Item | Priority | Notes |
 |---|---|---|---|
-| 1 | ~~Cancel Exabytes hosting~~ | DONE | Cancelled session 13 |
-| 2 | ~~Domain registrar decision~~ | DONE | Stays at Exabytes, renews 12/08/2026 |
-| 3 | Cancel M365 | Done — pending | Set to cancel on renewal, no action needed |
-| 4 | Replace placeholder client/testimonial copy | Medium — needs user input | data.js → clientGroups[], testimonials[] |
-| 5 | Distinct artiste portraits | Medium — needs user input | Lawrence Wong + Theresa Carpio share image |
-| 6 | Real UEN | Medium — needs user input | Add to data.js.contact.uen |
-| 7 | Verify deployed SEO/404/headers | Low | After next deploy — see "First things" §2 |
-| 8 | Real-device QA responsive | Low | Test on phones |
-| 9 | Google Search Console + sitemap submit | Low | Optional discoverability boost |
+| 1 | **Pick a design direction** | **Blocking** | A / B / C or a hybrid. Gates all page templates |
+| 2 | **Zoho datacentre** | **Blocking the CRM adapter** | The domain at the API console — `.com` / `.eu` / `.in` / `.com.au` |
+| 3 | **Zoho trial → Free on 12 Sep 2026** | High — dated | Enterprise trial expires. Lead payload uses only standard fields, so nothing should break, but verify after |
+| 4 | Verify the 18 client names | High — needs user | All `verified: false`; none render until confirmed. See "the client copy problem" below |
+| 5 | Real event dates | Medium | `data.js` carries a year only; migration set Jan 1. Needed for `Event` structured data |
+| 6 | Real testimonials, or drop the section | Medium — needs user | The two live ones are anonymised to role + category |
+| 7 | Real UEN | Medium — needs user | |
+| 8 | Distinct artiste portraits | Medium — needs user | Lawrence Wong has no gallery images |
+| 9 | Chinese names, Instagram handles, showreel URLs | Medium — needs user | Schema fields exist and are optional |
+| 10 | Enable R2 in Cloudflare | Low | Only needed for the talent-submission upload feature |
+| 11 | Regenerate the Zoho client secret | Low | Partially exposed in a screenshot during setup |
+| 12 | Google Search Console | Low | Set up before cutover for before/after data |
+
+---
+
+## The client copy problem — read this before touching content
+
+The live site names Marina Bay Sands, Mediacorp, Ogilvy, Edelman, DDB, Singapore Tourism
+Board, Changi Airport Group, ONE Championship and Tiger Beer as clients. Both testimonials
+are anonymised to role and category, which is the shape copy takes when it is written
+rather than collected. Session 13's handoff already flagged this as placeholder, and it
+shipped anyway.
+
+The rebuild's `clients` schema defaults `verified` to `false` and the build will not render
+an unverified name. That turns "remember to check the client list" into something enforced.
+**Flip entries to `true` individually, only once someone confirms the engagement was real.**
 
 ---
 
@@ -128,123 +110,78 @@ Singapore talent agency · Desktop-first editorial prototype · React 18 + Babel
 
 | Service | Provider | Plan | Cost | Status |
 |---|---|---|---|---|
-| Web hosting | Netlify | Free | $0 | Active |
-| DNS | Cloudflare | Free | $0 | Active |
-| Email (mailboxes) | Zoho Mail | Free (5 users) | $0 | Active |
-| Transactional email | Resend | Free tier | $0 | Active |
-| Domain registration | Exabytes | Domain only | Paid renewal, due 12/08/2026 | Active |
-| Old hosting | Exabytes | cPanel 13 Plus | — | CANCELLED |
-| Old email | Microsoft 365 | Business Basic | ~$6.30 USD/mo | Cancelling on renewal |
+| Web hosting (live) | Netlify | Free | $0 | Active — until cutover |
+| Web hosting (target) | Cloudflare Workers | Free | $0 | Not yet deployed |
+| DNS | Cloudflare | Free, DNS-only | $0 | Active |
+| Email (mailboxes) | Zoho Mail | Free, 3 users | $0 | Active |
+| Enquiry store | Zoho CRM | Enterprise trial → Free 12 Sep | $0 | Provisioned, not wired |
+| Team alerts | Telegram bot | — | $0 | Working |
+| Transactional email | Resend | Free | $0 | Active, domain verified |
+| CMS auth proxy | Cloudflare Worker | Free | $0 | `sveltia-cms-auth` deployed |
+| Domain registration | Exabytes | Domain only | Renews 12/08/2026 | Active — `.com.sg` cannot transfer |
+| Old hosting | Exabytes cPanel | — | — | CANCELLED (session 13) |
+| Old email | Microsoft 365 | — | — | Cancelling on renewal |
 
-**Monthly cost:** $0 (domain renewal annually)
+**Monthly cost:** $0. Domain renewal annually.
 
 ---
 
-## File map (current state)
+## Repo layout
 
 ```
-/                                Repo root
-├── .gitignore
-├── README.md
-├── CLAUDE.md
-├── data.js                      CDN → assets/cdn (local, 32 images)
-├── netlify.toml                 Build config + /api/enquiry redirect + security headers
-├── _redirects                   WP → React URL map (17 rules)
-├── sitemap.xml                  7 canonical URLs
-├── robots.txt                   Sitemap ref + utility-page disallows
-│
-├── index.html · artistes.html · clients.html · work.html
-├── services.html · about.html · contact.html
-├── og-card.html · og-card-photo.html · email-preview.html
-├── 404.html                     Branded static 404 (Netlify auto-serves)
-│
-├── components/
-│   ├── hero.jsx · nav.jsx · sections.jsx
-│   ├── page-header.jsx · tweaks-panel.jsx
-│
-├── styles/
-│   ├── styles.css · responsive.css
-│
-├── docs/
-│   ├── handoff.md               THIS FILE
-│   ├── DEPLOYMENT_RUNBOOK.md    8-phase plan (phases 0–7 complete, phase 8 in progress)
-│   ├── DECISIONS.md             14 ADRs
-│   ├── ZOHO_TEAM_SETUP.md       Staff onboarding
-│   ├── redirects.md             WP → React URL map (source for _redirects)
-│   ├── CLAUDE_CODE_START.md     First-prompt guide
-│   ├── EMAIL_SETUP.md           Netlify-flavored
-│   └── USER_MIGRATION_GUIDE.md  Human-facing deploy guide
-│
-├── netlify/
-│   └── functions/
-│       └── enquiry.js           Netlify Function (Resend + in-memory rate limit)
-│
-├── email-templates/
-│   ├── team-notification.js · auto-reply.js
-│
-├── scripts/
-│   ├── download-cdn-images.mjs
-│   ├── build-og-card-photo.mjs
-│   └── build-og-card-photo-canvas.recipe.js
-│
-├── assets/
-│   ├── cdn/                     32 localized images
-│   ├── cdn-map.json             Original URL → local path map
-│   ├── gems-stamp-nav.jpg · gems-stamp.jpg
-│   └── og-card.png · og-card-photo.png
-│
-└── uploads/                     WP XML export + earlier handoffs (read-only)
+/                    LEGACY — live, do not break
+  *.html             12 pages, React 18 UMD + @babel/standalone, no build
+  data.js            frozen; migrate from it, don't extend it
+  components/ styles/ netlify/functions/enquiry.js
+  netlify.toml       publish "." — note this also publishes site/ on previews
+  _redirects         17 WordPress → React rules (SEO, do not lose)
+
+site/                REBUILD
+  src/content.config.ts     five collections, Zod-validated
+  src/content/              4 artistes · 3 events · 18 clients · 4 services
+  src/assets/cdn/           images duplicated here so Astro can process them
+  src/pages/index.astro     smoke test, not a design
+
+scripts/migrate-data-to-collections.mjs    one-off, run once, kept for the record
 ```
 
 ---
 
-## Locked design system (unchanged — do not modify)
+## Next session
 
-**Palette — Cool Mist + Cobalt-Led**
-Mist `#E6ECF2` · Cobalt `#0D3FA0` · Cobalt-deep `#062870` · Cobalt-soft `#2A5DC4`
-Teal `#1FA2C2` · Teal-soft `#5CC1D9` · Brass `#C9A961` (accent only)
-Clay `#D8E1ED` · Sage `#C8D4E0` (section tints) · Ink `#0E1A2B`
-
-**Type** — Inter Tight 400/500/600. Newsreader italic for show title citations only.
-JetBrains Mono for eyebrow rails + numerals.
-
-**Breakpoints** — 1100 / 900 / 600. Hamburger ≤900. Tap targets ≥44px.
-
-**Viewport units** — `100vh` fallback first, then `100dvh` (fill) or `100svh` (ceiling).
+1. **Get the design decision**, then build the eleven page types.
+2. Wire the enquiry endpoint once the Zoho datacentre is known: fan out to CRM +
+   Telegram + Resend with `allSettled`, store first so an email failure cannot lose a lead.
+3. Chase the content list (items 4–9). It has the longest lead time and needs people.
 
 ---
 
-## Locked decisions (do not re-debate — see docs/DECISIONS.md for full ADRs)
+## Locked decisions (see `docs/DECISIONS.md` — do not re-debate)
 
-- Netlify Free (not Vercel — commercial ToS issue)
-- Zoho Mail Free for email (grandfathered signup worked)
-- Upstash dropped — in-memory rate limit only (ADR-005)
-- Resend for branded auto-reply (not Formspree)
-- `marketing@gemstalent.com.sg` as public-facing email
-- No TypeScript / Redux / Redis / Cypress
-- `data.js` single source of truth, zero build step
-- Gallery arrays must be static (not Array.from) — ADR-013
-- Exabytes exit order: email → DNS → cancel hosting → domain decision (ADR-014, updated)
-- Cloudflare for DNS (free plan, DNS only mode — no proxy)
-- `.com.sg` stays at Exabytes or Vodien — Cloudflare Registrar doesn't support TLD
+- Astro 7 + TypeScript, static output, React islands (ADR-001-amended)
+- Content collections, not `data.js` (ADR-002-amended)
+- Cloudflare hosting after cutover; Netlify until then (ADR-004-amended)
+- Zoho CRM + Telegram + Resend auto-reply, `allSettled` (ADR-005-amended)
+- Sveltia CMS, not Keystatic — Keystatic caps at Astro 5 (ADR-015)
+- Cloudflare Web Analytics (ADR-016)
+- Palette and logo locked; typography is open until the direction is picked
+- `.com.sg` stays at Exabytes — Cloudflare Registrar does not support the TLD
+- Never edit legacy files to make the rebuild work
 
 ---
 
-## DNS records (Cloudflare — clean set)
+## DNS records (Cloudflare — unchanged this session)
 
 | Type | Name | Content | Notes |
 |---|---|---|---|
-| A | `gemstalent.com.sg` | `75.2.60.5` | Netlify (DNS only) |
+| A | `gemstalent.com.sg` | `75.2.60.5` | Netlify (DNS only) — changes at cutover |
 | CNAME | `www` | `gemstalent.netlify.app` | Netlify (DNS only) |
-| CNAME | `mail` | `gemstalent.com.sg` | Legacy (DNS only) |
-| MX | root | `mx.zoho.com` [10] | Zoho |
-| MX | root | `mx2.zoho.com` [20] | Zoho |
-| MX | root | `mx3.zoho.com` [50] | Zoho |
+| CNAME | `mail` | `gemstalent.com.sg` | Legacy |
+| MX | root | `mx.zoho.com` [10] · `mx2` [20] · `mx3` [50] | Zoho |
 | MX | `send` | `feedback-smtp.ap-northeast-1.amazonses.com` [10] | Resend |
 | TXT | root | `v=spf1 include:zohomail.com ~all` | SPF |
-| TXT | root | `zoho-verification=zb393...` | Zoho domain verify |
+| TXT | root | `zoho-verification=zb393...` | Zoho verify |
 | TXT | `_dmarc` | `v=DMARC1; p=none;` | DMARC |
-| TXT | `default._domainkey` | Resend DKIM key | Resend |
-| TXT | `resend._domainkey` | Resend DKIM key | Resend |
-| TXT | `zmail._domainkey` | Zoho DKIM key | Zoho |
+| TXT | `default._domainkey` · `resend._domainkey` | Resend DKIM | Resend |
+| TXT | `zmail._domainkey` | Zoho DKIM | Zoho |
 | TXT | `send` | `v=spf1 include:amazonses.com ~all` | Resend SPF |
