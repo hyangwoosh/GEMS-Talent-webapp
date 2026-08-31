@@ -246,3 +246,202 @@ If you (future Claude Code or Claude design session) need to revisit a decision:
 1. **Don't** silently update code in a way that contradicts an ADR.
 2. **Do** raise it with the user explicitly: "ADR-N says X. New consideration: Y. Recommend updating ADR-N to Z?"
 3. If the user agrees, append a new entry to this file with `ADR-N-amended` and the new reasoning. Don't delete the old reasoning — keep the history.
+
+---
+---
+
+# Rebuild amendments — August 2026
+
+> The site is being rebuilt from scratch on Astro. The ADRs below are amended or
+> superseded by that decision. Original reasoning is preserved above per the
+> amendment protocol; nothing has been deleted.
+>
+> Context: the rebuild was triggered by a competitive review of nine Singapore and
+> regional talent agencies. Every one of them has indexable per-artiste pages;
+> GEMS has anchors on a single page. That gap is structural, not visual — content
+> is stored as presentation (a display array for the hero rotator, hardcoded JSX
+> sections for the work page, string keys standing in for relationships that
+> nothing validates), so pages cannot be generated from it.
+
+## ADR-001-amended — Astro 7 with a build step
+
+**Supersedes ADR-001** (build-step-free React via Babel CDN).
+
+**Decision:** Astro 7 + TypeScript, static output, React islands for the interactive parts.
+
+**Why the original reasoning no longer holds:**
+- ADR-001's own revisit trigger has fired: *"if page-load metrics start mattering for
+  SEO/conversion."* They do. Buyers search for artistes by name, and the site has no
+  per-artiste URL to land them on.
+- The site ships React **development** builds plus `@babel/standalone` and transpiles
+  JSX in the browser on every page load, for every visitor. The 150 KB / 10 ms estimate
+  in ADR-001 was optimistic by roughly an order of magnitude.
+- 13 MB of unoptimised JPEG. A competitor running on Wix serves AVIF at responsive
+  sizes; Astro's image pipeline closes that gap with no manual work.
+- "Edit a file → reload browser" is preserved by Vite HMR, which is faster than the
+  full reload the original setup required.
+
+**Rejected alternatives:**
+- **Next.js 16** — a server framework for an 8-page brochure site. ADR-004 already
+  rejected Vercel on commercial-ToS grounds, and off-Vercel Next is second-class.
+  Next 16 also carries a heavy security-patch cadence for a site with no login and
+  no database.
+- **React Router v8** — a good framework, but router-first: no zero-JS path, and
+  everything renders through React. Worse for SEO-critical marketing pages.
+- **TanStack Start** — stable and popular as of 2026, but SPA-first and explicitly
+  weaker for content-heavy public sites.
+- **Eleventy** — viable, but no component islands and a weaker image story.
+
+**When to revisit:** if authenticated per-user state arrives (client portal, artiste
+login, live availability calendar). Then run Astro for the marketing site and a
+separate app framework on a subdomain — not one framework straining to do both.
+
+---
+
+## ADR-002-amended — Content collections replace `data.js`
+
+**Supersedes ADR-002** (`window.GEMS_DATA` as single source).
+
+**Decision:** Zod-validated Astro content collections — `artistes`, `events`,
+`services`, `clients`, `updates` — one file per record.
+
+**Why:**
+- The single-source principle in ADR-002 was right; the implementation could not hold it.
+  There are currently **three unsynchronised representations of the same five events**:
+  `featured[]` for the hero rotator, hardcoded JSX sections in `work.html`, and three
+  separate gallery arrays.
+- Relationships are string keys with nothing validating them. `roster[].relatedWork` is
+  `"rws-exclusive-showcase"` — a plain string pointing at a `<section id>`. Rename the id
+  and the link dies silently in production.
+- The artiste ↔ event relationship is many-to-many. `relatedWork` is a single string, so
+  it structurally cannot express an artiste with two events. That ceiling is already
+  present in the data.
+- Under collections, a broken `reference()` fails the build instead of shipping.
+
+---
+
+## ADR-004-amended — Hosting: Cloudflare Workers
+
+**Amends ADR-004** (Netlify, not Vercel). The anti-Vercel reasoning is unchanged and
+still stands.
+
+**Decision:** Cloudflare Workers, static output with two on-demand routes.
+
+**Why:**
+- DNS is already on Cloudflare, so this consolidates a vendor rather than adding one.
+  Turnstile, Web Analytics and R2 all live in the same account.
+- Cloudflare acquired the Astro team in January 2026, making Astro-on-Cloudflare
+  first-party.
+- Static asset requests are unmetered on the free plan, versus Netlify's 100 GB/month.
+- Migration cost is near zero *during the rebuild* — the enquiry function is being
+  rewritten anyway, and the DNS change is one A record. It would be a poor trade as a
+  standalone migration.
+
+**Note:** Netlify Free explicitly permits commercial use and remains a valid fallback.
+This is consolidation, not a fix for a problem.
+
+---
+
+## ADR-005-amended — Enquiry fan-out: Zoho CRM + Telegram + Resend
+
+**Amends ADR-005** (Resend + Netlify Function).
+
+**Decision:** the enquiry endpoint fans out via `Promise.allSettled` to:
+1. **Zoho CRM Free** — the lead record, and the source of truth
+2. **Telegram bot** — instant team alert
+3. **Resend** — the branded auto-reply to the enquirer
+
+**Why:**
+- The current function has no store at all. If Resend throws, it returns 502 and **the
+  enquiry is lost permanently** — no retry, no queue, no record. That is the actual
+  defect being fixed; the vendor choices follow from it.
+- The two Resend sends are currently sequential `await`s. Fanning out in parallel
+  roughly halves response time.
+- **The team notification email is dropped.** Once CRM holds the record and Telegram
+  pushes the alert, it is a third copy of the same information landing in an inbox
+  nobody files.
+- **Resend is kept for the auto-reply only** — nothing else in the stack can send it.
+  Cloudflare Email Routing is inbound-forwarding only; Zoho CRM Free excludes workflow
+  automation; Zoho Mail free-tier SMTP is restricted and sending programmatically from a
+  staff mailbox risks that mailbox's reputation.
+- Zoho CRM Free adds **no new vendor** — same account as the mailboxes — and its 3-user
+  ceiling matches the three mailboxes exactly.
+
+**Constraints to respect:**
+- Zoho CRM Free excludes custom fields. The lead payload must map only to standard
+  fields: `Last_Name`, `First_Name`, `Email`, `Phone`, `Company`, `Description`,
+  `Lead_Source`.
+- `Lead_Source` is a picklist. `"Website"` is **not** a valid value out of the box —
+  either add it to the picklist or use an existing entry.
+- The org is on an Enterprise trial until **12 September 2026**, after which it
+  downgrades to Free. Anything built on trial-only features will break that day.
+
+**Rejected:** Airtable (adds a vendor; 1,000 API calls/month is a monthly ceiling),
+Cloudflare D1 (no UI — the people who need this data are not technical), Google Sheets
+(no pipeline), Supabase (free tier pauses when idle).
+
+---
+
+## ADR-010-amended — TypeScript is in
+
+**Amends ADR-010** (no TypeScript, Redux, Redis, or Cypress).
+
+**Decision:** TypeScript, strict. The rejections of Redux, Redis and Cypress stand.
+
+**Why:** TypeScript arrives free with Astro content collections — the Zod schema *is* the
+type. The ADR-010 objection was to ceremony without payoff; here the payoff is that a
+missing portrait or a malformed slug fails the build instead of rendering a blank card,
+which is the exact class of bug the handoff has been tracking as an open item.
+
+---
+
+## ADR-013-amended — Gallery arrays become collection fields
+
+**Supersedes ADR-013** (static gallery arrays, no `Array.from`).
+
+**Decision:** galleries are `z.array(image())` fields on the artiste and event records.
+
+**Why:** the concern in ADR-013 was static analysability — that generated URLs are
+invisible to tooling. Collections satisfy that more strongly: images are resolved and
+validated at build time, and a missing file fails the build.
+
+---
+
+## ADR-015 — Sveltia CMS, not Keystatic
+
+**Decision:** Sveltia CMS for the browser-based editing UI.
+
+**Why not Keystatic** (the first choice):
+- `@keystatic/astro` declares peer dependencies for Astro `2 || 3 || 4 || 5`. It does not
+  support Astro 6, and its admin UI crashes with React hook errors there. Astro 7 is
+  further out still. Using it would mean pinning Astro 5.
+
+**Why Sveltia:**
+- Decap CMS (the incumbent git-based option) is no longer actively maintained. Sveltia is
+  its actively-developed successor — drop-in config compatibility, ~300 KB bundle,
+  stronger i18n, several hundred longstanding Decap issues fixed.
+- **Framework-agnostic.** It is a static admin page talking to the Git provider, with no
+  peer dependency on Astro. It cannot break when Astro majors — which is precisely what
+  disqualified Keystatic, and Astro is now on a yearly major cadence.
+- Git-based, so it adds no vendor and no cost.
+
+**Cost:** GitHub auth needs an OAuth proxy — `sveltia-cms-auth` deployed as a Cloudflare
+Worker, in the account already in use. Removable if GitHub ships client-side PKCE for
+this flow.
+
+**Priority:** optional. The CMS exists so non-technical staff can edit content; a
+developer editing MDX directly needs none of it. Defer until someone else has to edit.
+
+---
+
+## ADR-016 — Analytics: Cloudflare Web Analytics
+
+**Decision:** Cloudflare Web Analytics at launch. PostHog later if funnel data is wanted.
+
+**Why:** free, unlimited, cookieless — which sidesteps the consent question entirely —
+and it is in the account already holding DNS and hosting. GA4 rejected: consent burden
+and a hostile UI for a site this size.
+
+**The metric that matters** is not pageviews. It is *artiste page view → enquiry click →
+submit*, per artiste, which tells the team which names are actually in demand. Nothing in
+the current site can produce that number.
